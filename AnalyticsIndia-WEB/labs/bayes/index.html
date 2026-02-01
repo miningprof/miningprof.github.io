@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bayes: The Unit Square | Interactive Stats</title>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Global & Local Styles -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <a href="../../index.html"><i class="fa-solid fa-arrow-left"></i> Home</a>
+        </div>
+        <h3 style="margin: 0;">The Unit Square (Bayes)</h3>
+
+        <!-- Audio Toggle -->
+        <button id="btn-audio" class="btn"
+            style="background: rgba(255,255,255,0.1); font-size: 0.8rem; padding: 0.5rem 1rem;">
+            <i class="fa-solid fa-volume-xmark" id="audio-icon"></i> Guide: OFF
+        </button>
+    </nav>
+
+    <main class="container">
+
+        <!-- SECTION 1: MOTIVATION -->
+        <section class="motivation-section">
+            <h2 class="text-gradient">Why Interpretation Matters</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                Our brains are terrible at conditional probability. We confuse "Probability of Cancer given Positive
+                Test" with "Probability of Positive Test given Cancer". They are not the same.
+            </p>
+
+            <div class="motivation-grid">
+                <!-- Card 1 -->
+                <div class="motivation-card">
+                    <div class="icon-box">
+                        <i class="fa-solid fa-user-doctor"></i>
+                    </div>
+                    <h4>The Medical Paradox</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        A test is 99% accurate. You test positive. Do you have the disease?
+                        <br><br>
+                        <strong>Surprise:</strong> If the disease is rare, the chance you have it might be less than
+                        50%. The math doesn't lie, but your intuition does.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="motivation-card">
+                    <div class="icon-box">
+                        <i class="fa-solid fa-envelope-open-text"></i>
+                    </div>
+                    <h4>Spam Filtering</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        How does Gmail know that "Prince" + "Money" = Spam?
+                        <br><br>
+                        It uses Naive Bayes. It updates the probability of "Spam" based on the evidence of specific
+                        words appearing.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="motivation-card">
+                    <div class="icon-box">
+                        <i class="fa-solid fa-helicopter"></i>
+                    </div>
+                    <h4>Search & Rescue</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        A ship is lost at sea. Where do you look?
+                        <br><br>
+                        Bayesian Search Theory updates the "probability map" of the location every time a sector is
+                        searched and nothing is found.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1.5: HISTORY & THEORY -->
+        <section class="history-section" style="margin-bottom: 4rem;">
+            <div class="glass-card" style="display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap;">
+
+                <div style="flex: 1; min-width: 300px;">
+                    <h3><i class="fa-solid fa-scroll" style="color: var(--accent-purple); margin-right: 0.5rem;"></i>
+                        The Billiard Table</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                        <strong>Reverend Thomas Bayes</strong> (1700s) never published his theorem. He just thought
+                        about a billiard table.
+                    </p>
+                    <p style="color: var(--text-secondary);">
+                        Imagine rolling a ball on a table (hidden from view). Then you roll more balls and are told if
+                        they land left or right of the first one.
+                        <br><br>
+                        With each new ball (evidence), you can narrow down the position of the first ball (hypothesis).
+                        This <strong>updating of belief</strong> is the core of Bayesian thinking.
+                    </p>
+                </div>
+
+                <div
+                    style="flex: 1; min-width: 300px; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <h4 style="color: var(--accent-cyan); margin-bottom: 0.5rem;">Bayes' Theorem Visualized</h4>
+                    <p style="font-style: italic; color: white; font-size: 1.1rem; margin-bottom: 1.5rem;">
+                        "Posterior matches Prior times Likelihood."
+                    </p>
+
+                    <div
+                        style="font-family: monospace; background: rgba(0,0,0,0.5); padding: 0.5rem; border-radius: 6px; text-align: center; margin-bottom: 1rem;">
+                        P(H|E) = <span style="color: #fca5a5;">P(E|H)</span> · <span style="color: #86efac;">P(H)</span>
+                        / P(E)
+                    </div>
+
+                    <p style="font-size: 0.8rem; color: var(--text-secondary);">
+                        Formula looks scary? Use the <strong>Unit Square</strong> below. It turns probability into
+                        simple Area.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 2: THE LAB -->
+        <section class="lab-workspace">
+            <h2>The Unit Square Experiment</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                Drag the lines to change the probabilities. See how the "True Positive" area (Dark Blue) compares to the
+                "False Positive" area (Light Red).
+            </p>
+
+            <div class="glass-card" style="padding: 0;">
+
+                <!-- Controls -->
+                <div class="controls-panel">
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; flex: 1;">
+                        <label style="font-size: 0.9rem; color: var(--text-secondary);">Scenario Presets</label>
+                        <select id="scenario-select"
+                            style="padding: 0.5rem; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: white; border-radius: 4px;">
+                            <option value="custom">Custom</option>
+                            <option value="mammogram">Mammogram (Rare Disease)</option>
+                            <option value="spam">Spam Filter (Frequent)</option>
+                            <option value="fair">Fair Coin</option>
+                        </select>
+                    </div>
+
+                    <div class="spacer" style="flex: 0.1;"></div>
+
+                    <div style="display: items; gap: 2rem;">
+                        <div class="stat-readout">
+                            <div class="label">Base Rate (Prior)</div>
+                            <div class="value" id="val-prior" style="color: var(--accent-cyan);">50%</div>
+                        </div>
+                        <div class="stat-readout">
+                            <div class="label">Correct Detection</div>
+                            <div class="value" id="val-tpr" style="color: var(--accent-blue);">80%</div>
+                        </div>
+                        <div class="stat-readout">
+                            <div class="label">False Alarm</div>
+                            <div class="value" id="val-fpr" style="color: #fca5a5;">10%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualization Area -->
+                <div class="canvas-container"
+                    style="position: relative; height: 500px; display: flex; justify-content: center; align-items: center; background: #0f1115;">
+
+                    <!-- The Canvas -->
+                    <canvas id="bayesCanvas"></canvas>
+
+                    <!-- Overlay Result -->
+                    <div class="result-overlay"
+                        style="position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.8); padding: 1rem; border-radius: 8px; border: 1px solid var(--accent-gold); text-align: center;">
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem;">UPDATED
+                            BELIEF</div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary);">Chance it's Real</div>
+                        <div id="val-posterior" style="font-size: 2rem; font-weight: 800; color: var(--accent-gold);">
+                            --%</div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- CHALLENGE MODAL -->
+    <div id="challenge-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-title">Protocol Initiated</div>
+            <p class="modal-body">
+                Welcome to the geometry of belief.<br><br>
+                Here, truth is not a point, but an area. Your job is to uncover the signal hidden in the noise.<br>
+                <span
+                    style="display:block; margin-top:1rem; font-size: 0.9rem; color: var(--text-secondary); font-style: italic;">"Update
+                    your priors, or be wrong forever."</span>
+            </p>
+            <button class="btn btn-primary" onclick="closeModal()">
+                I Understand. Proceed.
+            </button>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="../../js/utils.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

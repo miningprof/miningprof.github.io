@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proof of the Central Limit Theorem | Interactive Stats</title>
+    <!-- MathJax for rendering equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Crimson Text', serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 4rem 1rem;
+        }
+
+        .paper-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 4rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            color: #666;
+            margin-bottom: 3rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.25rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+            color: #111;
+        }
+
+        p {
+            margin-bottom: 1.25rem;
+            font-size: 1.15rem;
+        }
+
+        .theorem {
+            background: #f4f4f5;
+            padding: 1.5rem;
+            border-left: 4px solid #0f172a;
+            margin: 2rem 0;
+            font-style: italic;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+            color: #06b6d4;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="paper-container">
+        <a href="../labs/clt/index.html" class="back-link">← Back to Laboratory</a>
+
+        <h1>The Central Limit Theorem</h1>
+        <div class="subtitle">A Proof via Characteristic Functions</div>
+
+        <h2>1. Introduction</h2>
+        <p>
+            The Central Limit Theorem (CLT) is a fundamental result in probability theory. It states that the
+            distribution of the sample mean of a sequence of sequence of independent and identically distributed
+            (i.i.d.) random variables converges to a standard normal distribution as the sample size approaches
+            infinity, regardless of the underlying distribution of the variables.
+        </p>
+
+        <h2>2. Formal Statement</h2>
+        <div class="theorem">
+            <strong>Theorem.</strong> Let \( X_1, X_2, \dots \) be a sequence of i.i.d. random variables with expected
+            value \( \mathbb{E}[X_i] = \mu \) and finite variance \( \text{Var}(X_i) = \sigma^2 < \infty \). Then as \(
+                n \to \infty \), the random variable $$ Z_n=\frac{\bar{X}_n - \mu}{\sigma / \sqrt{n}} $$ converges in
+                distribution to a standard normal random variable \( Z \sim \mathcal{N}(0, 1) \). </div>
+
+                <h2>3. The Proof Idea</h2>
+                <p>
+                    The most common proof uses <strong>Characteristic Functions</strong> (which are essentially Fourier
+                    Transforms of probability distributions). The strategy is:
+                </p>
+                <ol>
+                    <li>Standardize the sum \( S_n = \sum X_i \).</li>
+                    <li>Find the characteristic function of the standardized sum.</li>
+                    <li>Take the limit as \( n \to \infty \) and show it equals the characteristic function of the
+                        Standard Normal distribution, which is \( e^{-t^2/2} \).</li>
+                </ol>
+
+                <h2>4. Step-by-Step Derivation</h2>
+                <p>
+                    Let \( Y_i = \frac{X_i - \mu}{\sigma} \). Then \( Y_i \) has mean 0 and variance 1.
+                    The standardized variable \( Z_n \) can be rewritten as:
+                    $$ Z_n = \frac{1}{\sqrt{n}} \sum_{i=1}^n Y_i $$
+                </p>
+                <p>
+                    Let \( \phi_Y(t) \) be the characteristic function of \( Y \). Since \( Y \) has mean 0 and variance
+                    1, the Taylor expansion of \( \phi_Y(t) \) around \( t=0 \) is:
+                    $$ \phi_Y(t) = 1 - \frac{t^2}{2} + o(t^2) $$
+                </p>
+                <p>
+                    Now consider the characteristic function of \( Z_n \):
+                    $$ \phi_{Z_n}(t) = \phi_{\sum Y_i}\left(\frac{t}{\sqrt{n}}\right) = \left[
+                    \phi_Y\left(\frac{t}{\sqrt{n}}\right) \right]^n $$
+                </p>
+                <p>
+                    Substituting the Taylor expansion:
+                    $$ \phi_{Z_n}(t) = \left[ 1 - \frac{(t/\sqrt{n})^2}{2} + o\left(\frac{t^2}{n}\right) \right]^n $$
+                    $$ \phi_{Z_n}(t) = \left[ 1 - \frac{t^2}{2n} + o\left(\frac{t^2}{n}\right) \right]^n $$
+                </p>
+                <p>
+                    Using the standard limit identity \( \lim_{n \to \infty} (1 - \frac{x}{n})^n = e^{-x} \), we get:
+                    $$ \lim_{n \to \infty} \phi_{Z_n}(t) = e^{-t^2/2} $$
+                </p>
+
+                <h2>5. Conclusion</h2>
+                <p>
+                    The function \( e^{-t^2/2} \) is precisely the characteristic function of the standard normal
+                    distribution. By Lévy's Continuity Theorem, convergence of characteristic functions implies
+                    convergence in distribution.
+                </p>
+                <p>
+                    Thus, we have proven that the normalized sum converges to a Standard Normal distribution.
+                </p>
+
+                <div
+                    style="border-top: 1px solid #ccc; margin-top: 4rem; padding-top: 1rem; font-size: 0.8rem; color: #888; text-align: center;">
+                    Generated for Interactive Stats Lab • Based on MIT 18.05
+                </div>
+        </div>
+
+</body>
+
+</html>

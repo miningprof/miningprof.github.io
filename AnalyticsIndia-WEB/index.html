@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Stats | Visualize the Math</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Font Awesome (for icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-chart-line" style="color: var(--accent-cyan); margin-right: 0.5rem;"></i>
+            Interactive<span class="text-gradient">Stats</span>
+        </div>
+        <div class="nav-links">
+            <a href="../index.html" style="font-size: 0.9rem; color: var(--text-secondary); margin-right: 1.5rem;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Professor Hub
+            </a>
+            <a href="https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/"
+                target="_blank" style="font-size: 0.9rem; color: var(--text-secondary);">Based on MIT 18.05</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section style="text-align: center; padding: 4rem 0;">
+            <h1 style="font-size: 3.5rem; margin-bottom: 1rem; line-height: 1.1;">
+                Don't just memorize formulas.<br>
+                <span class="text-gradient">Experience them.</span>
+            </h1>
+            <p style="color: var(--text-secondary); font-size: 1.25rem; max-width: 600px; margin: 0 auto 2rem;">
+                Interactive laboratories designed to build deep intuition for probability and statistics. No dry
+                textbooks, just experiments.
+            </p>
+            <a href="#labs" class="btn btn-primary">Start Experimenting</a>
+        </section>
+
+        <section id="labs">
+            <h2 style="border-left: 4px solid var(--accent-purple); padding-left: 1rem;">Available Laboratories</h2>
+
+            <div class="lab-grid">
+                <!-- CLT Card -->
+                <a href="labs/clt/" class="glass-card lab-card">
+                    <span class="lab-tag">Module 1</span>
+                    <span class="lab-icon">🔔</span>
+                    <h3>The Central Limit Theorem</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                        Discover why "normal" is normal. See how order emerges from chaos when you add things up.
+                    </p>
+                    <div style="display: flex; align-items: center; color: var(--accent-cyan); font-weight: 600;">
+                        Enter Lab <i class="fa-solid fa-arrow-right" style="margin-left: 0.5rem;"></i>
+                    </div>
+                </a>
+
+                <!-- Bayes Lab Card (Enabled) -->
+                <a href="labs/bayes/" class="glass-card lab-card">
+                    <span class="lab-tag">Module 2</span>
+                    <span class="lab-icon">🧩</span>
+                    <h3>The Unit Square (Bayes)</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                        A geometric approach to conditional probability. Understand false positives instantly.
+                    </p>
+                    <div style="display: flex; align-items: center; color: var(--accent-cyan); font-weight: 600;">
+                        Enter Lab <i class="fa-solid fa-arrow-right" style="margin-left: 0.5rem;"></i>
+                    </div>
+                </a>
+
+                <!-- Coming Soon: Regression -->
+                <div class="glass-card lab-card" style="opacity: 0.6; cursor: not-allowed;">
+                    <span class="lab-tag"
+                        style="background: rgba(255, 255, 255, 0.1); color: var(--text-secondary); border-color: transparent;">Coming
+                        Soon</span>
+                    <span class="lab-icon">📉</span>
+                    <h3>Least Squares Playground</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                        Physically feel the "pull" of outliers on a regression line.
+                    </p>
+                    <div style="display: flex; align-items: center; color: var(--text-secondary); font-weight: 600;">
+                        Under Construction
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 Interactive Stats. Built for MIT 18.05 Syllabus Study.</p>
+    </footer>
+
+</body>
+
+</html>

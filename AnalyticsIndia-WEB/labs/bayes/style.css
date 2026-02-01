@@ -1,0 +1,170 @@
+/* Bayes Lab Specific Styles */
+
+/* Canvas Container */
+.canvas-container {
+    width: 100%;
+    min-height: 500px;
+    background: linear-gradient(to bottom, #161b22, #0d1117);
+    border-top: 1px solid var(--glass-border);
+    border-radius: 0 0 12px 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+canvas {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    cursor: crosshair;
+}
+
+/* Stats Readout Top */
+.controls-panel {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--glass-border);
+    flex-wrap: wrap;
+}
+
+.stat-readout {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-readout .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.stat-readout .value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Motivation Cards (Reuse from CLT but ensure grid) */
+.motivation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.motivation-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    padding: 1.5rem;
+    border-radius: 12px;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.motivation-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-purple);
+}
+
+.icon-box {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: var(--accent-gold);
+    margin-bottom: 1rem;
+}
+
+/* Challenge Modal & Toasts (Inherited from global css but specific updates if needed) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.modal-content {
+    background: #161b22;
+    border: 1px solid var(--accent-gold);
+    padding: 3rem;
+    max-width: 500px;
+    text-align: center;
+    border-radius: 16px;
+    box-shadow: 0 0 30px rgba(242, 204, 143, 0.2);
+    transform: scale(0.95);
+    animation: modalPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes modalPop {
+    to {
+        transform: scale(1);
+    }
+}
+
+.modal-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    color: var(--accent-gold);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.modal-body {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.toast-container {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 900;
+    pointer-events: none;
+}
+
+.toast {
+    background: rgba(22, 27, 34, 0.95);
+    border: 1px solid var(--accent-cyan);
+    padding: 1rem 1.5rem;
+    border-radius: 50px;
+    color: var(--accent-cyan);
+    font-weight: 500;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    animation: slideUp 0.3s ease-out;
+    pointer-events: auto;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -1,59 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Site Under Construction</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f7f7f7;
-      color: #333;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-      flex-direction: column;
-    }
-    h1 {
-      font-size: 3em;
-      color: #ff6b6b;
-      margin-bottom: 10px;
-    }
-    p {
-      font-size: 1.2em;
-      color: #555;
-    }
-    .loader {
-      margin: 30px 0;
-      border: 6px solid #f3f3f3;
-      border-top: 6px solid #ff6b6b;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    footer {
-      margin-top: 40px;
-      font-size: 0.9em;
-      color: #aaa;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Digital Professor</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <h1>🚧 Under Construction 🚧</h1>
-  <div class="loader"></div>
-  <p>We're working hard to bring you something amazing!<br>
-     Please check back soon.</p>
-  <footer>
-    &copy; 2025 YourCompanyName. All rights reserved.
-  </footer>
+
+    <nav class="container">
+        <div class="logo">The Digital Professor</div>
+        <div style="color: var(--text-secondary); font-size: 0.9rem;">
+            <i class="fa-solid fa-code"></i> &nbsp;|&nbsp; <i class="fa-solid fa-chart-simple"></i>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- HERO SECTION -->
+        <section class="hero">
+
+            <h1>
+                I Engineer Intuition<br>
+                <span class="text-gradient">For The Masses.</span>
+            </h1>
+
+            <p>
+                Bridging the gap between complex theory and practical application.
+                Choose your path below to begin mastering the essential tools of the modern world.
+            </p>
+
+            <div style="display: flex; gap: 1rem;">
+                <a href="#projects" class="btn btn-primary">Start Learning</a>
+                <a href="https://arpanhalder.github.io/" target="_blank" class="btn btn-secondary">Meet the
+                    Professor</a>
+            </div>
+        </section>
+
+        <!-- PROJECT PORTAL -->
+        <section id="projects">
+            <h2 style="margin-bottom: 2rem; font-size: 1.5rem; display: flex; align-items: center;">
+                <i class="fa-solid fa-door-open" style="color: var(--accent-gold); margin-right: 0.75rem;"></i>
+                The Open Lecture Hall
+            </h2>
+
+            <div class="projects-grid">
+
+                <!-- CARD 1: ANALYTICS INDIA -->
+                <a href="AnalyticsIndia-WEB/" class="project-card">
+                    <div class="card-icon" style="color: var(--accent-purple);">
+                        <i class="fa-solid fa-chart-network"></i>
+                    </div>
+                    <div class="card-title">Analytics India</div>
+                    <div class="card-desc">
+                        A visual journey through Probability and Statistics.
+                        Conduct experiments with a <strong>Live AI Guide</strong> and build intuition from the ground
+                        up.
+                    </div>
+                    <div class="card-link">
+                        Enter Lab <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </a>
+
+                <!-- CARD 2: OOPc -->
+                <a href="https://github.com/oopc" target="_blank" class="project-card">
+                    <div class="card-icon" style="color: var(--accent-blue);">
+                        <i class="fa-brands fa-github-alt"></i>
+                    </div>
+                    <div class="card-title">OOPc</div>
+                    <div class="card-desc">
+                        Object-Oriented Programming concepts decoded.
+                        Understand the architecture that powers modern software engineering.
+                    </div>
+                    <div class="card-link">
+                        View Source <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </a>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="container">
+        <div>
+            &copy; 2026. Built to share knowledge.
+        </div>
+        <div>
+            <a href="https://github.com/miningprof" style="color: inherit; margin-left: 1rem;"><i
+                    class="fa-brands fa-github"></i></a>
+            <a href="#" style="color: inherit; margin-left: 1rem;"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
+    </footer>
+
 </body>
+
 </html>
