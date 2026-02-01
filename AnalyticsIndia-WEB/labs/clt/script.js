@@ -261,7 +261,7 @@ function stopAutoRun() {
 // Audio / Toast System
 // --------------------------------------------------------------------------
 
-let audioEnabled = false;
+let audioEnabled = true;
 const btnAudio = document.getElementById('btn-audio');
 
 function speak(text) {
@@ -318,6 +318,13 @@ btnAudio.addEventListener('click', () => {
 
 // Pre-load voices
 window.speechSynthesis.getVoices();
+
+// Initialize Audio Button State (reflecting audioEnabled = true)
+if (audioEnabled) {
+    btnAudio.innerHTML = '<i class="fa-solid fa-volume-high"></i> Guide: ON';
+    btnAudio.style.background = 'rgba(6, 182, 212, 0.2)';
+    btnAudio.style.color = '#06b6d4';
+}
 
 
 // --------------------------------------------------------------------------

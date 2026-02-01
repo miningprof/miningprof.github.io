@@ -13,6 +13,7 @@ const valTpr = document.getElementById('val-tpr');
 const valFpr = document.getElementById('val-fpr');
 const valPosterior = document.getElementById('val-posterior');
 const scenarioSelect = document.getElementById('scenario-select');
+const btnAudio = document.getElementById('btn-audio');
 
 // State
 let state = {
@@ -26,6 +27,8 @@ let state = {
     height: 0,
     padding: 40
 };
+
+let audioEnabled = true;
 
 // Colors
 const COLORS = {
@@ -61,6 +64,32 @@ function init() {
 
     // Initial Draw
     requestAnimationFrame(loop);
+
+    // Init Voice
+    window.speechSynthesis.getVoices();
+
+    // Initialize Audio Button State (reflecting audioEnabled = true)
+    if (audioEnabled) {
+        btnAudio.innerHTML = '<i class="fa-solid fa-volume-high"></i> Guide: ON';
+        btnAudio.style.background = 'rgba(6, 182, 212, 0.2)';
+        btnAudio.style.color = '#06b6d4';
+    }
+
+    // Audio Button Listener
+    btnAudio.addEventListener('click', () => {
+        audioEnabled = !audioEnabled;
+        if (audioEnabled) {
+            btnAudio.innerHTML = '<i class="fa-solid fa-volume-high"></i> Guide: ON';
+            btnAudio.style.background = 'rgba(6, 182, 212, 0.2)';
+            btnAudio.style.color = '#06b6d4';
+            showToast("Audio output enabled. I will guide you verbally.");
+        } else {
+            btnAudio.innerHTML = '<i class="fa-solid fa-volume-xmark"></i> Guide: OFF';
+            btnAudio.style.background = 'rgba(255,255,255,0.1)';
+            btnAudio.style.color = 'inherit';
+            window.speechSynthesis.cancel();
+        }
+    });
 
     // Show Modal
     setTimeout(() => {
@@ -271,13 +300,30 @@ function closeModal() {
     modal.style.opacity = '0';
     setTimeout(() => {
         modal.style.display = 'none';
-        // Play Audio Intro if needed?
-        // speak("Welcome to the Unit Square."); 
+        showToast("Welcome to the Unit Square.", "fa-solid fa-door-open");
     }, 500);
 }
 
 // Toast System (Checking for Global Utils or defining local fallback)
+// Toast System
+function speak(text) {
+    if (!audioEnabled) return;
+    if (window.speechSynthesis.speaking) return;
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices();
+    // Try to find a deep/authoritative voice
+    const preferredVoice = voices.find(v => v.name.includes('Google US English')) || voices[0];
+    if (preferredVoice) utterance.voice = preferredVoice;
+    utterance.rate = 1.0;
+    window.speechSynthesis.speak(utterance);
+}
+
 function showToast(msg) {
+    // 1. Audio
+    speak(msg);
+
+    // 2. Visual Layer
     if (window.showToastGlobal) {
         window.showToastGlobal(msg);
     } else {
