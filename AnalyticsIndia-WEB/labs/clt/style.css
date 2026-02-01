@@ -88,16 +88,33 @@ input[type="range"] {
 }
 
 /* Animation Elements */
+/* Animation Elements */
+.sample-dot {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--accent-cyan);
+    /* Cyan for samples */
+    border-radius: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 4px var(--accent-cyan);
+    will-change: top, left, opacity;
+    transition: left 0.5s ease-in-out, top 0.5s ease-in, opacity 0.3s ease;
+    z-index: 5;
+}
+
 .drop-ball {
     position: absolute;
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    /* Slightly larger for mean */
+    height: 8px;
     background: var(--accent-purple);
     border-radius: 50%;
     transform: translateX(-50%);
     box-shadow: 0 0 8px var(--accent-purple);
     will-change: top, opacity;
     transition: top 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53), opacity 0.5s ease-in;
+    z-index: 6;
 }
 
 /* --- ADDITIONS FOR PHASE 4 --- */

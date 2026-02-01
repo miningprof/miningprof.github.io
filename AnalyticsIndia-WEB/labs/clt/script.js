@@ -177,6 +177,8 @@ function getRandomValue() {
 }
 
 function takeSample(cnt = 1) {
+    let lastBatch = null;
+
     for (let k = 0; k < cnt; k++) {
         const samples = [];
         for (let i = 0; i < state.sampleSize; i++) {
@@ -184,10 +186,59 @@ function takeSample(cnt = 1) {
         }
         const mean = Utils.mean(samples);
         state.means.push(mean);
+        lastBatch = { samples, mean };
     }
 
     updateSampleChart();
     updateStats();
+    return lastBatch;
+}
+
+function animateSampleDrop(batch) {
+    if (!batch) return;
+
+    // 1. Spawn Sample Dots (at Top)
+    const dots = [];
+    batch.samples.forEach(val => {
+        const dot = document.createElement('div');
+        dot.className = 'sample-dot';
+        dot.style.left = (val * 100) + '%';
+        dot.style.top = '0';
+        els.animZone.appendChild(dot);
+        dots.push({ el: dot, val: val });
+    });
+
+    // 2. Animate Merge to Mean (Horizontal Move)
+    // Wait a tiny bit for render
+    setTimeout(() => {
+        dots.forEach(d => {
+            d.el.style.left = (batch.mean * 100) + '%';
+            d.el.style.opacity = '0.5';
+        });
+    }, 50);
+
+    // 3. Drop Mean Ball (Vertical Move) after samples merge
+    setTimeout(() => {
+        // Remove sample dots
+        dots.forEach(d => d.el.remove());
+
+        // Spawn Mean Ball
+        const ball = document.createElement('div');
+        ball.className = 'drop-ball';
+        ball.style.left = (batch.mean * 100) + '%';
+        ball.style.top = '0'; // Start at top (where dots merged)
+        els.animZone.appendChild(ball);
+
+        // Drop animation
+        requestAnimationFrame(() => {
+            ball.style.top = '140px'; // Bottom of anim zone
+            ball.style.opacity = '0';
+        });
+
+        // Cleanup ball
+        setTimeout(() => { ball.remove(); }, 500);
+
+    }, 550); // Matches CSS transition time for dots (0.5s) + buffer
 }
 
 function updateSampleChart() {
@@ -360,20 +411,11 @@ els.sampleSize.addEventListener('input', (e) => {
 });
 
 els.btnSample.addEventListener('click', () => {
-    takeSample(1);
+    // 1. Logic
+    const batch = takeSample(1);
 
-    // Visual FX
-    const ball = document.createElement('div');
-    ball.className = 'drop-ball';
-    ball.style.left = '50%';
-    ball.style.top = '0';
-    els.animZone.appendChild(ball);
-
-    setTimeout(() => {
-        ball.style.top = '100px';
-        ball.style.opacity = '0';
-    }, 10);
-    setTimeout(() => { ball.remove(); }, 500);
+    // 2. Enhanced Animation
+    animateSampleDrop(batch);
 
     // Smart Narrator (Toast)
     const count = state.means.length;
