@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confidence Intervals | Interactive Stats</title>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Global & Local Styles -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <a href="../../index.html"><i class="fa-solid fa-arrow-left"></i> Home</a>
+        </div>
+        <h3 style="margin: 0;">Confidence Intervals</h3>
+
+        <button id="btn-audio" class="btn"
+            style="background: rgba(6, 182, 212, 0.2); font-size: 0.8rem; padding: 0.5rem 1rem; color: #06b6d4;">
+            <i class="fa-solid fa-volume-high" id="audio-icon"></i> Guide: ON
+        </button>
+    </nav>
+
+    <main class="container">
+
+        <!-- SECTION 1: MOTIVATION -->
+        <section class="motivation-section">
+            <h2 class="text-gradient">The Ring Toss Game</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                A 95% Confidence Interval doesn't mean "There is a 95% chance the mean is here."
+                <br>It means "If you toss 100 rings, 95 will catch the pole."
+            </p>
+
+            <div class="motivation-grid">
+                <div class="motivation-card">
+                    <div class="icon-box">
+                        <i class="fa-solid fa-bullseye"></i>
+                    </div>
+                    <h4>The Hidden Truth</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        There is a SINGLE true population mean (the pole). It doesn't move.
+                        It isn't "probability". It is just a number.
+                    </p>
+                </div>
+
+                <div class="motivation-card">
+                    <div class="icon-box">
+                        <i class="fa-solid fa-ring"></i>
+                    </div>
+                    <h4>The Ring (Interval)</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        Each experiment you do creates a random interval (the ring).
+                        Sometimes it catches the mean (Green). Sometimes it misses (Red).
+                    </p>
+                </div>
+
+                <div class="motivation-card">
+                    <div class="icon-box">
+                        <i class="fa-solid fa-percent"></i>
+                    </div>
+                    <h4>Understanding 95%</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        It describes the reliability of your <em>method</em>, not the probability of the detailed result
+                        you just got.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: THE LAB -->
+        <section class="lab-workspace">
+            <h2>The Toss Simulation</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                Launch 100 intervals. See how many turn green.
+                Move the "True Standard Deviation" slider to make the game harder (wider spread).
+            </p>
+
+            <div class="glass-card" style="padding: 0;">
+
+                <!-- Controls -->
+                <div class="controls-panel">
+
+                    <div style="display: flex; gap: 2rem; margin-right: 1rem;">
+                        <div class="stat-readout">
+                            <div class="label" style="font-size: 0.8rem; color: var(--text-secondary);">Attempts</div>
+                            <div class="value" id="val-attempts" style="color: white; font-weight: bold;">0</div>
+                        </div>
+                        <div class="stat-readout">
+                            <div class="label" style="font-size: 0.8rem; color: var(--text-secondary);">Caught</div>
+                            <div class="value" id="val-caught" style="color: #4ade80; font-weight: bold;">0</div>
+                        </div>
+                        <div class="stat-readout">
+                            <div class="label" style="font-size: 0.8rem; color: var(--text-secondary);">Missed</div>
+                            <div class="value" id="val-missed" style="color: #f87171; font-weight: bold;">0</div>
+                        </div>
+                    </div>
+
+                    <div class="spacer" style="flex: 1;"></div>
+
+                    <button class="btn btn-primary" id="btn-toss">
+                        <i class="fa-solid fa-play" style="margin-right: 0.5rem;"></i> Toss 20 Rings
+                    </button>
+
+                    <button class="btn"
+                        style="border: 1px solid var(--glass-border); color: var(--text-secondary); margin-left:1rem;"
+                        id="btn-reset">
+                        Reset
+                    </button>
+                </div>
+
+                <!-- Visualization Area -->
+                <div class="canvas-container"
+                    style="position: relative; height: 500px; background: #0f1115; overflow: hidden;">
+                    <canvas id="ciCanvas"></canvas>
+
+                    <div id="true-mean-label" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); 
+                        color: rgba(255,255,255,0.3); font-size: 0.8rem; pointer-events: none;">
+                        TRUE MEAN (μ)
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="../../js/utils.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

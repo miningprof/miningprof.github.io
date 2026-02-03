@@ -1,0 +1,83 @@
+/* Birthday Lab Styles */
+
+.person-card {
+    position: absolute;
+    width: 60px;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+}
+
+.person-card:hover {
+    transform: scale(1.1);
+    z-index: 10;
+}
+
+.person-icon {
+    font-size: 2rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+}
+
+.person-date {
+    font-size: 0.7rem;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: white;
+    font-family: monospace;
+    white-space: nowrap;
+}
+
+.person-card.match .person-icon {
+    color: var(--accent-purple);
+    animation: pulse 1s infinite;
+}
+
+.person-card.match .person-date {
+    background: var(--accent-purple);
+    font-weight: bold;
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.stat-readout {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.stat-readout .value {
+    font-family: monospace;
+    font-size: 1.2rem;
+}

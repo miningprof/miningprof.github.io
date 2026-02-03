@@ -1,0 +1,16 @@
+/* CI Lab Styles */
+
+.stat-readout {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.stat-readout .value {
+    font-family: monospace;
+    font-size: 1.2rem;
+}
+
+.controls-panel {
+    border-bottom: 1px solid var(--glass-border);
+}

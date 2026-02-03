@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Bootstrap | Interactive Stats</title>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Global & Local Styles -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <a href="../../index.html"><i class="fa-solid fa-arrow-left"></i> Home</a>
+        </div>
+        <h3 style="margin: 0;">The Bootstrap</h3>
+
+        <button id="btn-audio" class="btn"
+            style="background: rgba(6, 182, 212, 0.2); font-size: 0.8rem; padding: 0.5rem 1rem; color: #06b6d4;">
+            <i class="fa-solid fa-volume-high" id="audio-icon"></i> Guide: ON
+        </button>
+    </nav>
+
+    <main class="container">
+
+        <!-- SECTION 1: MOTIVATION -->
+        <section class="motivation-section">
+            <h2 class="text-gradient">Pulling Yourself Up by Your Bootstraps</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                What if you only have ONE small sample of data? How can you know how accurate your average is?
+                <br>The answer: <strong>Resample</strong> your own data.
+            </p>
+
+            <div class="motivation-grid">
+                <div class="motivation-card">
+                    <div class="icon-box">
+                        <i class="fa-solid fa-copy"></i>
+                    </div>
+                    <h4>The Cloning Machine</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        Pretend your single sample IS the entire population.
+                        Draw from it "with replacement" to create thousands of "fake" datasets.
+                    </p>
+                </div>
+
+                <div class="motivation-card">
+                    <div class="icon-box">
+                        <i class="fa-solid fa-dna"></i>
+                    </div>
+                    <h4>Why it works</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        The variation inside your sample usually mirrors the variation in the real world.
+                        Bootstrapping lets us estimate standard error without fancy formulas.
+                    </p>
+                </div>
+
+                <div class="motivation-card">
+                    <div class="icon-box">
+                        <i class="fa-solid fa-chart-bar"></i>
+                    </div>
+                    <h4>Any Statistic</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                        Works for Means, Medians, Correlation, or anything else.
+                        It's the "Swiss Army Knife" of modern statistics.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: THE LAB -->
+        <section class="lab-workspace">
+            <h2>The Data Factory</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                We have one original sample of 10 numbers.
+                Generate 1,000 resamples to see the range of likely values.
+            </p>
+
+            <div class="glass-card" style="padding: 0;">
+
+                <!-- Visualization Area -->
+                <div class="canvas-container"
+                    style="position: relative; height: 350px; background: #0f1115; overflow: hidden; display: flex; flex-direction: column;">
+
+                    <!-- Original Sample Viz -->
+                    <div id="original-sample"
+                        style="height: 80px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; position: relative;">
+                        <span
+                            style="position: absolute; left: 1rem; color: var(--text-secondary); font-size: 0.8rem;">ORIGINAL</span>
+                        <!-- Dots injected here -->
+                    </div>
+
+                    <!-- Animation Zone -->
+                    <div id="anim-zone" style="flex: 1; position: relative;">
+                        <canvas id="bootstrapCanvas"></canvas>
+                    </div>
+
+                </div>
+
+                <!-- Controls -->
+                <div class="controls-panel" style="padding: 1.5rem; border-top: 1px solid var(--glass-border);">
+
+                    <div style="display: flex; gap: 2rem; align-items: center;">
+                        <button class="btn btn-primary" id="btn-resample-1">
+                            <i class="fa-solid fa-plus" style="margin-right: 0.5rem;"></i> Generate 1 Resample
+                        </button>
+
+                        <button class="btn" style="background: rgba(139, 92, 246, 0.2); color: var(--accent-purple);"
+                            id="btn-resample-1000">
+                            <i class="fa-solid fa-bolt" style="margin-right: 0.5rem;"></i> Generate 1,000
+                        </button>
+
+                        <div class="spacer" style="flex: 1;"></div>
+
+                        <div class="stat-readout">
+                            <div class="label" style="font-size: 0.8rem; color: var(--text-secondary);">Bootstrap
+                                Samples</div>
+                            <div class="value" id="val-count" style="color: white; font-weight: bold;">0</div>
+                        </div>
+                        <div class="stat-readout">
+                            <div class="label" style="font-size: 0.8rem; color: var(--text-secondary);">Estimated Mean
+                            </div>
+                            <div class="value" id="val-mean" style="color: var(--accent-cyan); font-weight: bold;">--
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="../../js/utils.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
