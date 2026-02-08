@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 1: The Invisible Tax (Inflation)</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <header>
+        <h1>Module 1: The Invisible Tax</h1>
+        <p>Understanding Inflation & Purchasing Power</p>
+    </header>
+
+    <nav>
+        <a href="../../index.html">Home</a>
+        <a href="#why">Why It Matters</a>
+        <a href="#theory">Theory</a>
+        <a href="#lab">Interactive Lab</a>
+        <a href="#policy">Policy Thinking</a>
+    </nav>
+
+    <div class="container">
+
+        <!-- Section 1: Why it matters -->
+        <section id="why" class="module-section">
+            <h2>1. Why This Matters</h2>
+            <p>Have you noticed that ₹100 doesn't buy as much as it used to? This is <strong>inflation</strong>. It acts
+                like an invisible tax on your savings. If your income doesn't potential grow faster than inflation, you
+                are actually getting poorer every year, even if your salary increases!</p>
+            <div class="highlight-box">
+                <h3>The Silent Thief</h3>
+                <p>If inflation is 6% per year, your ₹1,00,000 savings will be worth only ₹50,000 in purchasing power
+                    after 12 years.</p>
+            </div>
+        </section>
+
+        <!-- Section 2: Theory -->
+        <section id="theory" class="module-section">
+            <h2>2. The Theory</h2>
+            <p><strong>Inflation</strong> is the rate at which the general level of prices for goods and services is
+                rising.</p>
+
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h3>Demand-Pull Inflation</h3>
+                    <p>"Too much money chasing too few goods." When people have more money to spend, but supply stays
+                        the same, prices go up.</p>
+                </div>
+                <div class="theory-card">
+                    <h3>Cost-Push Inflation</h3>
+                    <p>When the cost of raw materials (like oil) or wages goes up, companies raise prices to maintain
+                        profits.</p>
+                </div>
+            </div>
+
+            <h3>Watch & Learn</h3>
+            <p>Watch this video to understand how the RBI controls inflation.</p>
+            <!-- Placeholder for YouTube Video - Using a generic educational placeholder if specific one not provided, or a relevant searched one later. -->
+            <div class="video-container">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/PHe0bXAIuk0"
+                    title="YouTube video player" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+            </div>
+            <p class="caption">Source: Ray Dalio's "How The Economic Machine Works" (Snippet on Inflation focus)</p>
+        </section>
+
+        <!-- Section 3: Interactive Lab -->
+        <section id="lab" class="module-section">
+            <h2>3. Interactive Lab: Personal Inflation Calculator</h2>
+            <p>Official inflation (CPI) is an average. Your <em>personal</em> inflation might be different depending on
+                what you buy. Let's calculate yours.</p>
+
+            <div class="lab-container">
+                <div class="input-panel">
+                    <h3>Your Monthly Spends (₹)</h3>
+                    <div class="form-group">
+                        <label for="food">Food & Groceries:</label>
+                        <input type="number" id="food" value="10000">
+                    </div>
+                    <div class="form-group">
+                        <label for="rent">Rent / Housing:</label>
+                        <input type="number" id="rent" value="15000">
+                    </div>
+                    <div class="form-group">
+                        <label for="fuel">Fuel & Transport:</label>
+                        <input type="number" id="fuel" value="5000">
+                    </div>
+                    <div class="form-group">
+                        <label for="education">Education & Health:</label>
+                        <input type="number" id="education" value="5000">
+                    </div>
+                    <div class="form-group">
+                        <label for="other">Other (Clothes, Entertainment):</label>
+                        <input type="number" id="other" value="5000">
+                    </div>
+                    <button onclick="calculateInflation()">Calculate My Inflation</button>
+                </div>
+
+                <div class="output-panel">
+                    <h3>Result</h3>
+                    <canvas id="inflationChart"></canvas>
+                    <div id="resultText"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Policy Question -->
+        <section id="policy" class="module-section">
+            <h2>4. Policy Thinking</h2>
+            <div class="policy-card">
+                <h3>Scenario: The Onion Crisis</h3>
+                <p>The price of onions has doubled to ₹100/kg due to a bad monsoon. Onions are a staple for the poor.
+                </p>
+
+                <h4>As a Policymaker, what would you do?</h4>
+                <div class="options">
+                    <button class="policy-btn" onclick="showOutcome('ban')">Ban Exports</button>
+                    <button class="policy-btn" onclick="showOutcome('subsidize')">Subsidize Imports</button>
+                    <button class="policy-btn" onclick="showOutcome('nothing')">Do Nothing</button>
+                </div>
+
+                <div id="policy-outcome" class="outcome-box" style="display:none;"></div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Economics for Indian Voters. <a href="../../index.html" style="color: white;">Back to Home</a>
+        </p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
