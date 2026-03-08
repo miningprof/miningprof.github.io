@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2: Where Does My Tax Go?</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <header>
+        <h1>Module 2: Where Does My Tax Go?</h1>
+        <p>Understanding the Union Budget & Fiscal Policy</p>
+    </header>
+
+    <nav>
+        <a href="../../index.html">Home</a>
+        <a href="#why">Why It Matters</a>
+        <a href="#theory">Theory</a>
+        <a href="#lab">Interactive Lab</a>
+        <a href="#policy">Policy Thinking</a>
+    </nav>
+
+    <div class="container">
+
+        <!-- Section 1: Why it matters -->
+        <section id="why" class="module-section">
+            <h2>1. Why This Matters</h2>
+            <p>Every time you buy something, you pay GST. If you earn above a certain amount, you pay Income Tax. But
+                where does this money go? Does the government just keep it? Understanding the budget helps you know if
+                your tax money is being used wisely.</p>
+            <div class="highlight-box">
+                <h3>Did You Know?</h3>
+                <p>For every ₹1 the government spends, nearly 20 paise goes just to pay <strong>Interest</strong> on old
+                    loans! Only a fraction actually goes to building roads or schools.</p>
+            </div>
+        </section>
+
+        <!-- Section 2: Theory -->
+        <section id="theory" class="module-section">
+            <h2>2. The Theory</h2>
+            <p>The Government Budget has two main parts:</p>
+
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h3>Revenue (Income)</h3>
+                    <ul>
+                        <li><strong>Direct Tax:</strong> Income Tax, Corporate Tax.</li>
+                        <li><strong>Indirect Tax:</strong> GST, Customs Duty, Petrol Tax.</li>
+                        <li><strong>Borrowing:</strong> Loans taken by Govt (Fiscal Deficit).</li>
+                    </ul>
+                </div>
+                <div class="theory-card">
+                    <h3>Expenditure (Spending)</h3>
+                    <ul>
+                        <li><strong>Capital Exp:</strong> Investments (Roads, Bridges, Hospitals) - <em>Good for
+                                future</em>.</li>
+                        <li><strong>Revenue Exp:</strong> Daily running costs (Salaries, Pensions, Subsidies, Interest)
+                            - <em>Necessary but doesn't create assets</em>.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>The Deficit Problem</h3>
+            <p>If the government spends ₹120 but earns only ₹100, the extra ₹20 is the <strong>Fiscal Deficit</strong>.
+                It must be borrowed, which increases debt for future generations.</p>
+        </section>
+
+        <!-- Section 3: Interactive Lab -->
+        <section id="lab" class="module-section">
+            <h2>3. Interactive Lab: Be the Finance Minister</h2>
+            <p>You have a budget of <strong>₹100 Lakh Crores</strong>. You must allocate it to different sectors. Your
+                goal is to maximize India's <strong>Long-term Growth</strong> while keeping the <strong>Public
+                    Happy</strong>. Careful: You cannot overspend!</p>
+
+            <div class="lab-container">
+                <div class="input-panel">
+                    <h3>Allocate Your Budget (Total: ₹100)</h3>
+
+                    <div class="slider-group">
+                        <label>Infrastructure (Roads, Railways) <span id="val-infra">20</span></label>
+                        <input type="range" min="0" max="50" value="20" id="infra" oninput="updateBudget()">
+                        <small>High Growth, Medium Happiness</small>
+                    </div>
+
+                    <div class="slider-group">
+                        <label>Defense (Military, Borders) <span id="val-defense">15</span></label>
+                        <input type="range" min="0" max="50" value="15" id="defense" oninput="updateBudget()">
+                        <small>Security is essential</small>
+                    </div>
+
+                    <div class="slider-group">
+                        <label>Welfare & Subsidies (Food, Freebies) <span id="val-welfare">25</span></label>
+                        <input type="range" min="0" max="50" value="25" id="welfare" oninput="updateBudget()">
+                        <small>Low Growth, High Happiness</small>
+                    </div>
+
+                    <div class="slider-group">
+                        <label>Education & Health <span id="val-social">10</span></label>
+                        <input type="range" min="0" max="50" value="10" id="social" oninput="updateBudget()">
+                        <small>Very High Growth (Long term)</small>
+                    </div>
+
+                    <div class="slider-group">
+                        <label>Interest on Loans (Fixed) <span id="val-interest">30</span></label>
+                        <input type="range" disabled value="30" id="interest">
+                        <small>Cannot be changed (Past Sins)</small>
+                    </div>
+
+                    <div class="budget-status" id="budget-status">
+                        Total Spent: ₹100 / ₹100
+                    </div>
+                </div>
+
+                <div class="output-panel">
+                    <h3>Projected Outcome (5 Years)</h3>
+                    <div class="meter-group">
+                        <label>GDP Growth Potential</label>
+                        <div class="meter-bar">
+                            <div class="meter-fill" id="meter-growth" style="width: 50%; background: #3498db;"></div>
+                        </div>
+                    </div>
+                    <div class="meter-group">
+                        <label>Public Happiness</label>
+                        <div class="meter-bar">
+                            <div class="meter-fill" id="meter-happy" style="width: 50%; background: #e67e22;"></div>
+                        </div>
+                    </div>
+                    <div class="meter-group">
+                        <label>National Security</label>
+                        <div class="meter-bar">
+                            <div class="meter-fill" id="meter-security" style="width: 50%; background: #2c3e50;"></div>
+                        </div>
+                    </div>
+
+                    <div id="minister-feedback" class="feedback-box">
+                        Adjust the sliders to see the impact.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Policy Question -->
+        <section id="policy" class="module-section">
+            <h2>4. Policy Thinking</h2>
+            <div class="policy-card">
+                <h3>Scenario: The Highway vs. The Loan Waiver</h3>
+                <p>An election is coming up. You have ₹50,000 Crores surplus.</p>
+
+                <h4>What should the government do?</h4>
+                <div class="options">
+                    <button class="policy-btn" onclick="showOutcome('highway')">Build a New Expressway</button>
+                    <button class="policy-btn" onclick="showOutcome('waiver')">Waive Farm Loans</button>
+                    <button class="policy-btn" onclick="showOutcome('taxcut')">Cut Income Tax</button>
+                </div>
+
+                <div id="policy-outcome" class="outcome-box" style="display:none;"></div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Economics for Indian Voters. <a href="../../index.html" style="color: white;">Back to Home</a>
+        </p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

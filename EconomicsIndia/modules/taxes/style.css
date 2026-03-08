@@ -1,0 +1,151 @@
+/* Inheriting base styles from module 1 where possible, adding specific ones here */
+
+.slider-group {
+    margin-bottom: 1.5rem;
+}
+
+.slider-group label {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 0.2rem;
+}
+
+.slider-group small {
+    color: #7f8c8d;
+    font-size: 0.8rem;
+}
+
+input[type=range] {
+    width: 100%;
+    cursor: pointer;
+}
+
+.budget-status {
+    background-color: #ecf0f1;
+    padding: 1rem;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 4px;
+    margin-top: 1rem;
+}
+
+.status-error {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.status-ok {
+    background-color: #27ae60;
+    color: white;
+}
+
+/* Meters */
+.meter-group {
+    margin-bottom: 1rem;
+}
+
+.meter-bar {
+    height: 20px;
+    background-color: #ecf0f1;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #bdc3c7;
+}
+
+.meter-fill {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.feedback-box {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #fce4ec;
+    border-left: 4px solid #d81b60;
+    border-radius: 4px;
+    font-style: italic;
+}
+
+/* Policy styles reused from Module 1 via style.css usually, but duplicating critical ones if they aren't global yet. 
+   Assuming basic layout is global or handled by parent. 
+   Adding specific policy box colors.
+*/
+
+.module-section {
+    background: white;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.highlight-box {
+    background-color: #d1ecf1;
+    border-left: 5px solid #17a2b8;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.theory-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.theory-card {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    border: 1px solid #e9ecef;
+}
+
+/* Lab Styles */
+.lab-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.input-panel,
+.output-panel {
+    flex: 1;
+    min-width: 300px;
+}
+
+/* Policy Styles */
+.policy-card {
+    background-color: #fff3cd;
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid #ffeeba;
+}
+
+.options {
+    display: flex;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+}
+
+.policy-btn {
+    background-color: var(--primary-color);
+    flex: 1;
+    padding: 1rem;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.policy-btn:hover {
+    background-color: #34495e;
+}
+
+.outcome-box {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 4px;
+    border-left: 4px solid var(--accent-color);
+}
