@@ -27,7 +27,7 @@
 
     <div class="container">
 
-        <!-- Section 1: Why it matters -->
+        <!-- সেকশন ১: এটি কেন গুরুত্বপূর্ণ (Section 1: Why it matters) -->
         <section id="why" class="module-section">
             <h2>1. Why This Matters</h2>
             <p>Every time you buy something, you pay GST. If you earn above a certain amount, you pay Income Tax. But
@@ -40,7 +40,7 @@
             </div>
         </section>
 
-        <!-- Section 2: Theory -->
+        <!-- সেকশন ২: থিওরি বা তত্ত্ব (Section 2: Theory) -->
         <section id="theory" class="module-section">
             <h2>2. The Theory</h2>
             <p>The Government Budget has two main parts:</p>
@@ -70,7 +70,7 @@
                 It must be borrowed, which increases debt for future generations.</p>
         </section>
 
-        <!-- Section 3: Interactive Lab -->
+        <!-- সেকশন ৩: ইন্টারেক্টিভ ল্যাব (Section 3: Interactive Lab) -->
         <section id="lab" class="module-section">
             <h2>3. Interactive Lab: Be the Finance Minister</h2>
             <p>You have a budget of <strong>₹100 Lakh Crores</strong>. You must allocate it to different sectors. Your
@@ -79,7 +79,69 @@
 
             <div class="lab-container">
                 <div class="input-panel">
-                    <h3>Allocate Your Budget (Total: ₹100)</h3>
+                    <h3>Revenue & Spending (in ₹ Lakh Crores)</h3>
+
+                    <details class="tax-group-details" open style="margin-bottom: 10px;">
+                        <summary>Direct Taxes <span style="font-size: 0.8em; font-weight: normal;">(Paid directly by
+                                entities)</span></summary>
+                        <div class="slider-group"
+                            style="background: #eaf2f8; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                            <label>Income Tax (Personal)* <span id="val-income-tax">10</span>%</label>
+                            <input type="range" min="0" max="30" value="10" id="income-tax" oninput="updateBudget()">
+                            <small>Muted anger due to slab system (see note below)</small>
+                        </div>
+                        <div class="slider-group"
+                            style="background: #e8f8f5; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                            <label>Corporate Tax Rate <span id="val-corp-tax">20</span>%</label>
+                            <input type="range" min="10" max="40" value="20" id="corp-tax" oninput="updateBudget()">
+                            <small>Huge Revenue, but stifles Business Growth</small>
+                        </div>
+                        <div class="slider-group"
+                            style="background: #fdf2e9; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                            <label>Capital & STT (Investments) <span id="val-cap-tax">15</span>%</label>
+                            <input type="range" min="0" max="30" value="15" id="cap-tax" oninput="updateBudget()">
+                            <small>Hurts startup funding & long-term innovation</small>
+                        </div>
+                        <div class="slider-group"
+                            style="background: #f4ecf7; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                            <label>Property & Wealth Taxes <span id="val-prop-tax">5</span>%</label>
+                            <input type="range" min="0" max="15" value="5" id="prop-tax" oninput="updateBudget()">
+                            <small>Annoys homeowners, medium revenue</small>
+                        </div>
+                    </details>
+
+                    <details class="tax-group-details" style="margin-bottom: 20px;">
+                        <summary>Indirect Taxes <span style="font-size: 0.8em; font-weight: normal;">(Included in
+                                prices)</span></summary>
+                        <div class="slider-group"
+                            style="background: #eaf2f8; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                            <label>GST (Goods & Services) <span id="val-gst-tax">18</span>%</label>
+                            <input type="range" min="5" max="28" value="18" id="gst-tax" oninput="updateBudget()">
+                            <small>Massive revenue, hurts the poor most (Regressive)</small>
+                        </div>
+                        <div class="slider-group"
+                            style="background: #fdedec; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                            <label>Excise Duty (Fuel/Liquor) <span id="val-excise-tax">20</span>%</label>
+                            <input type="range" min="0" max="40" value="20" id="excise-tax" oninput="updateBudget()">
+                            <small>Increases transport costs for everything</small>
+                        </div>
+                        <div class="slider-group"
+                            style="background: #e8f8f5; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                            <label>Customs Duty (Imports) <span id="val-custom-tax">10</span>%</label>
+                            <input type="range" min="0" max="30" value="10" id="custom-tax" oninput="updateBudget()">
+                            <small>Protects local biz short-term, hurts global growth long-term</small>
+                        </div>
+                    </details>
+
+                    <div class="slider-group"
+                        style="background: #fdedec; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+                        <label>Borrowing (Fiscal Deficit) <span id="val-borrow">10</span></label>
+                        <input type="range" min="0" max="30" value="10" id="borrow" oninput="updateBudget()">
+                        <small>Extra money now, but increases Inflation</small>
+                    </div>
+
+                    <hr>
+                    <h4>Allocate Budget:</h4>
 
                     <div class="slider-group">
                         <label>Infrastructure (Roads, Railways) <span id="val-infra">20</span></label>
@@ -112,7 +174,16 @@
                     </div>
 
                     <div class="budget-status" id="budget-status">
-                        Total Spent: ₹100 / ₹100
+                        Total Budget: ₹100 | Spent: ₹100
+                    </div>
+
+                    <div class="tax-footnote">
+                        <strong>* * Note on Income Tax in India:</strong> Unlike flat-tax systems, India operates on a
+                        progressive "slab" structure where the vast majority of citizens (especially agriculture
+                        workers) are exempt or fall below the taxable threshold. Therefore, raising the Income Tax
+                        slider primarily angers the upper-middle and salaried classes, having a slightly muted effect on
+                        <em>overall</em> national happiness compared to raising GST (which affects everyone who buys a
+                        packet of biscuits or soap).
                     </div>
                 </div>
 
@@ -136,15 +207,26 @@
                             <div class="meter-fill" id="meter-security" style="width: 50%; background: #2c3e50;"></div>
                         </div>
                     </div>
+                    <div class="meter-group">
+                        <label>Inflation Rate (Danger!)</label>
+                        <div class="meter-bar">
+                            <div class="meter-fill" id="meter-inflation" style="width: 20%; background: #c0392b;"></div>
+                        </div>
+                    </div>
 
-                    <div id="minister-feedback" class="feedback-box">
+                    <div style="text-align: center; margin-top: 15px; font-weight: bold; background: #ecf0f1; padding: 10px; border-radius: 4px;"
+                        id="output-budget-status">
+                        Total Budget: ₹100 | Spent: ₹100
+                    </div>
+
+                    <div id="minister-feedback" class="feedback-box" style="margin-top: 10px;">
                         Adjust the sliders to see the impact.
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 4: Policy Question -->
+        <!-- সেকশন ৪: পলিসি নিয়ে চিন্তাভাবনা (Section 4: Policy Question) -->
         <section id="policy" class="module-section">
             <h2>4. Policy Thinking</h2>
             <div class="policy-card">
@@ -160,6 +242,19 @@
 
                 <div id="policy-outcome" class="outcome-box" style="display:none;"></div>
             </div>
+        </section>
+
+        <!-- Disclaimer ও সাপোর্ট (Disclaimer & Support) -->
+        <section class="module-section" style="background-color: #fff3cd; border-left: 5px solid #ffc107;">
+            <h3>🤝 We Need Your Support!</h3>
+            <p><strong>Disclaimer:</strong> This interactive simulation simplifies vastly complex national economic
+                theories for educational purposes. To make content like this truly comprehensive and realistic, we need
+                full-time experts, economists, and developers to come together and brainstorm. </p>
+            <p>If your finances are good and you found this valuable, please consider supporting this civic initiative.
+                Your contribution will empower us to <strong>hire dedicated people</strong> and expand these educational
+                modules for everyone.</p>
+            <button class="policy-btn" style="background-color: #d35400; max-width: 200px; margin-top: 10px;"
+                onclick="alert('Support link/UPI coming soon. Thank you!')">♥ Support Us</button>
         </section>
 
     </div>
