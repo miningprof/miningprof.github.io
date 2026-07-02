@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historical Market Data Fetcher</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Historical Data Engine</h1>
+
+        <div class="control-panel">
+            <div class="input-group">
+                <label for="ticker">Ticker Symbol (e.g., JNJ, COALINDIA.NS, TATASTEEL.NS, NTPC.NS):</label>
+                <input type="text" id="ticker" value="COALINDIA.NS" placeholder="Enter Ticker">
+            </div>
+
+            <div class="input-group">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" value="2019-01-01">
+            </div>
+
+            <div class="input-group">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" value="2024-01-01">
+            </div>
+
+            <button id="fetchBtn">Fetch Historical Data</button>
+        </div>
+
+        <div id="statusMessage"></div>
+
+        <div class="table-container">
+            <table id="dataTable">
+                <thead>
+                    <tr id="tableHeaders">
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

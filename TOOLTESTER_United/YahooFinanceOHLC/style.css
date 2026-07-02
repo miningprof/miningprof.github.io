@@ -1,0 +1,91 @@
+:root {
+    --bg-color: #f4f4f9;
+    --panel-bg: #ffffff;
+    --text-main: #333333;
+    --border-color: #dddddd;
+    --btn-color: #0056b3;
+    --btn-hover: #004494;
+}
+
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.control-panel {
+    background: var(--panel-bg);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+input {
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: var(--btn-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: var(--btn-hover);
+}
+
+#statusMessage {
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #d9534f; /* Red for errors, will change to green for success in JS */
+}
+
+.table-container {
+    overflow-x: auto;
+    background: var(--panel-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: right;
+    border-bottom: 1px solid var(--border-color);
+}
+
+th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+th:first-child, td:first-child {
+    text-align: left; /* Keep dates left-aligned */
+}
