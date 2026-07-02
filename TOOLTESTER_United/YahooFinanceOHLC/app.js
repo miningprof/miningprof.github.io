@@ -21,9 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await fetchHistoricalData(ticker, startDate, endDate);
             if (data && data.length > 0) {
                 renderTable(data);
-                updateStatus(`Successfully loaded ${data.length} records.`, "green");
+                updateStatus(`Successfully loaded ${data.length} months of records.`, "green");
             } else {
-                updateStatus("No data found for this range.", "red");
+                updateStatus("No data found for this range or ticker.", "red");
             }
         } catch (error) {
             console.error(error);
@@ -32,15 +32,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     async function fetchHistoricalData(ticker, start, end) {
-        // Convert to Unix timestamps
+        // Convert dates to Unix timestamps
         const period1 = Math.floor(new Date(start).getTime() / 1000);
         const period2 = Math.floor(new Date(end).getTime() / 1000);
         
-        // Yahoo Finance endpoint (monthly data including dividends)
-        const targetUrl = `https://query1.finance.yahoo.com/v7/finance/download/${ticker}?period1=${period1}&period2=${period2}&interval=1mo&events=history`;
+        // Use the v8 Chart API (returns JSON) instead of the v7 Download API (returns CSV)
+        const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?period1=${period1}&period2=${period2}&interval=1mo&events=div`;
         
-        // Public CORS proxy to bypass browser restrictions
-        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+        // Use AllOrigins proxy for better JSON handling
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
 
         const response = await fetch(proxyUrl);
         
@@ -48,48 +48,67 @@ document.addEventListener('DOMContentLoaded', () => {
             throw new Error(`HTTP error: ${response.status}`);
         }
         
-        const csvText = await response.text();
-        return parseCSV(csvText);
+        const json = await response.json();
+        return parseYahooJSON(json);
     }
 
-    function parseCSV(csvText) {
-        const rows = csvText.split('\n').filter(row => row.trim() !== '');
-        if (rows.length < 2) return [];
+    function parseYahooJSON(json) {
+        // Ensure the data structure is valid before parsing
+        if (!json.chart || !json.chart.result || !json.chart.result[0].timestamp) {
+            return [];
+        }
 
-        const headers = rows[0].split(',');
+        const result = json.chart.result[0];
+        const timestamps = result.timestamp;
+        const quote = result.indicators.quote[0];
+        const dividends = result.events && result.events.dividends ? result.events.dividends : {};
+
+        const data = [];
         
-        return rows.slice(1).map(row => {
-            const values = row.split(',');
-            let rowObj = {};
-            headers.forEach((header, index) => {
-                // Check if value exists before trimming
-                rowObj[header.trim()] = values[index] ? values[index].trim() : "N/A";
+        for (let i = 0; i < timestamps.length; i++) {
+            // Format Timestamp to YYYY-MM
+            const dateObj = new Date(timestamps[i] * 1000);
+            const dateStr = dateObj.toISOString().split('T')[0];
+            const currentYearMonth = dateStr.substring(0, 7);
+            
+            const close = quote.close[i];
+            
+            // Match dividends to the current month
+            let dividendAmount = 0.00;
+            for (const divKey in dividends) {
+                const divDate = new Date(parseInt(divKey) * 1000).toISOString().substring(0, 7);
+                if (divDate === currentYearMonth) {
+                    dividendAmount += dividends[divKey].amount;
+                }
+            }
+
+            data.push({
+                "Date": currentYearMonth,
+                "Close Price": close !== null && close !== undefined ? close.toFixed(2) : "N/A",
+                "Dividend Paid": dividendAmount > 0 ? dividendAmount.toFixed(2) : "0.00"
             });
-            return rowObj;
-        });
+        }
+        
+        return data;
     }
 
     function renderTable(data) {
-        // 1. Generate Headers dynamically from the first object's keys
+        if (data.length === 0) return;
         const headers = Object.keys(data[0]);
+        
+        // Generate Headers
         headers.forEach(headerText => {
             const th = document.createElement('th');
             th.textContent = headerText;
             tableHeaders.appendChild(th);
         });
 
-        // 2. Generate Rows
+        // Generate Rows
         data.forEach(rowData => {
             const tr = document.createElement('tr');
             headers.forEach(header => {
                 const td = document.createElement('td');
-                // Format numbers to 2 decimal places if they are valid numbers
-                const val = rowData[header];
-                if (!isNaN(val) && val !== "N/A" && header !== "Date") {
-                    td.textContent = parseFloat(val).toFixed(2);
-                } else {
-                    td.textContent = val;
-                }
+                td.textContent = rowData[header];
                 tr.appendChild(td);
             });
             tableBody.appendChild(tr);
