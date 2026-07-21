@@ -24,8 +24,7 @@
                 <div class="input-group">
                     <label for="provider">Data Provider</label>
                     <select id="provider">
-                        <option value="yahoofinance" selected>Yahoo Finance (Free, No Key Required)</option>
-                        <option value="arpan_api">Arpan Market API (BYOK)</option>
+                        <option value="arpan_api" selected>Arpan Market API (BYOK)</option>
                         <option value="alphavantage">Alpha Vantage</option>
                         <option value="fmp">Financial Modeling Prep (FMP)</option>
                         <option value="finnhub">Finnhub (Global)</option>
@@ -36,7 +35,7 @@
                 
                 <div class="input-group" id="apiKeyGroup">
                     <label for="apiKey">API Key</label>
-                    <input type="password" id="apiKey" placeholder="Not required for Yahoo Finance" disabled>
+                    <input type="password" id="apiKey" placeholder="Paste your API Key">
                 </div>
             </div>
 
@@ -69,46 +68,72 @@
 
         <div id="statusMessage" class="status-msg"></div>
 
-        <!-- Metrics Dashboard -->
-        <div class="metrics-grid" id="metricsGrid" style="display: none;">
-            <div class="metric-card">
-                <div class="metric-label">Average Close Price</div>
-                <div class="metric-value" id="metricAvgClose">-</div>
+        <!-- TAB NAVIGATION -->
+        <div class="tabs-wrapper" id="dashboardTabs" style="display: none;">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab(event, 'tab-charting')">Charting Engine</button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-fundamentals')">Fundamental Desk</button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-matrix')">Market Matrix</button>
             </div>
-            <div class="metric-card">
-                <div class="metric-label">Total Dividends Paid</div>
-                <div class="metric-value" id="metricTotalDiv">-</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Assumed Growth (g)</div>
-                <div class="metric-value" id="metricGrowth">-</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Avg GGM Intrinsic Value</div>
-                <div class="metric-value" id="metricAvgGGM">-</div>
-            </div>
-        </div>
 
-        <!-- Chart Visualization Card -->
-        <div class="chart-card" id="chartCard" style="display: none;">
-            <h3>Model Convergence: Market Close vs GGM Value</h3>
-            <div class="chart-container">
-                <canvas id="convergenceChart"></canvas>
+            <!-- TAB 1: CHARTING ENGINE -->
+            <div id="tab-charting" class="tab-content active">
+                <div class="chart-card">
+                    <div class="chart-header-controls">
+                        <h3>Technical & Momentum Analysis</h3>
+                        <div class="indicator-toggles">
+                            <label><input type="checkbox" id="toggleSMA"> 3-Period SMA</label>
+                            <label><input type="checkbox" id="toggleMACD"> MACD / RSI</label>
+                            <label><input type="checkbox" id="toggleBollinger"> Bollinger Bands</label>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="convergenceChart"></canvas>
+                    </div>
+                </div>
             </div>
-        </div>
-        
-        <div class="table-container" id="resultsTableContainer" style="display: none;">
-            <h3>Historical Timeline & Valuation Results</h3>
-            <table id="dataTable">
-                <thead>
-                    <tr id="tableHeaders"></tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-            </table>
+
+            <!-- TAB 2: FUNDAMENTAL DESK -->
+            <div id="tab-fundamentals" class="tab-content">
+                <div class="metrics-grid" id="metricsGrid">
+                    <div class="metric-card">
+                        <div class="metric-label">Average Close Price</div>
+                        <div class="metric-value" id="metricAvgClose">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Total Dividends</div>
+                        <div class="metric-value" id="metricTotalDiv">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Gordon Growth (g)</div>
+                        <div class="metric-value" id="metricGrowth">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">DCF Intrinsic Value</div>
+                        <div class="metric-value" id="metricDCF">Pending API</div>
+                    </div>
+                </div>
+                
+                <div class="table-container" id="resultsTableContainer">
+                    <h3>Historical Timeline & GGM Results</h3>
+                    <table id="dataTable">
+                        <thead><tr id="tableHeaders"></tr></thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 3: MARKET MATRIX -->
+            <div id="tab-matrix" class="tab-content">
+                <div class="table-container">
+                    <h3>Comparable Company Analysis (CCA)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Sector peer comparison data will populate here once the backend batch endpoint is live.</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script src="providers.js"></script>
-    <script src="app.js"></script>
+    <script src="providers.js?v=3"></script>
+    <script src="app.js?v=3"></script>
 </body>
 </html>

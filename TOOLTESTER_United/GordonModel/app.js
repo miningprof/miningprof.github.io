@@ -10,7 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Toggle API Key input visibility based on provider selection
     providerSelect.addEventListener('change', () => {
-        if (providerSelect.value === 'alpaca') {
+        if (providerSelect.value === 'yahoofinance') {
+            apiKeyInput.disabled = true;
+            apiKeyInput.placeholder = "Not required for Yahoo Finance";
+            apiKeyInput.value = "";
+        } else if (providerSelect.value === 'alpaca') {
             apiKeyInput.disabled = false;
             apiKeyInput.placeholder = "Paste Key ID, Secret Key (separated by comma)";
         } else {
@@ -27,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const endDate = new Date(document.getElementById('endDate').value);
         const r = parseFloat(document.getElementById('reqReturn').value);
 
-        if (!apiKey) {
+        if (providerKey !== 'yahoofinance' && !apiKey) {
             updateStatus("API Key is required for the selected provider.", "error");
             return;
         }
@@ -149,13 +153,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('metricAvgClose').textContent = `$${avgClose.toFixed(2)}`;
         document.getElementById('metricTotalDiv').textContent = `$${totalDiv.toFixed(2)}`;
         document.getElementById('metricGrowth').textContent = gVal;
-        const metricAvgGGMEl = document.getElementById('metricAvgGGM');
-        if (metricAvgGGMEl) {
-            metricAvgGGMEl.textContent = avgGGM !== "N/A" ? `$${avgGGM}` : "N/A";
-        }
+        document.getElementById('metricAvgGGM').textContent = avgGGM !== "N/A" ? `$${avgGGM}` : "N/A";
         
-        // Unhide the entire tab system once data is loaded
-        document.getElementById('dashboardTabs').style.display = 'block';
+        document.getElementById('metricsGrid').style.display = 'grid';
+        document.getElementById('chartCard').style.display = 'block';
+        document.getElementById('resultsTableContainer').style.display = 'block';
     }
 
     function renderChart(calculatedData) {
@@ -254,8 +256,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function clearDisplay() {
         tableHeaders.innerHTML = '';
         tableBody.innerHTML = '';
-        // Hide the tab system when fetching new data
-        document.getElementById('dashboardTabs').style.display = 'none';
+        document.getElementById('metricsGrid').style.display = 'none';
+        document.getElementById('chartCard').style.display = 'none';
+        document.getElementById('resultsTableContainer').style.display = 'none';
     }
 
     function updateStatus(message, type) {
@@ -276,22 +279,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
-
-// Tab Switching Logic
-window.switchTab = function(event, tabId) {
-    // 1. Hide all tab contents
-    const contents = document.querySelectorAll('.tab-content');
-    contents.forEach(content => {
-        content.classList.remove('active');
-    });
-
-    // 2. Remove 'active' class from all buttons
-    const buttons = document.querySelectorAll('.tab-btn');
-    buttons.forEach(btn => {
-        btn.classList.remove('active');
-    });
-
-    // 3. Show the selected tab and highlight the clicked button
-    document.getElementById(tabId).classList.add('active');
-    event.currentTarget.classList.add('active');
-};
