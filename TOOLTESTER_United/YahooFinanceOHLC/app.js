@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
             apiKeyInput.disabled = true;
             apiKeyInput.placeholder = "Not required for Yahoo Finance";
             apiKeyInput.value = "";
+        } else if (providerSelect.value === 'alpaca') {
+            apiKeyInput.disabled = false;
+            apiKeyInput.placeholder = "Paste Key ID, Secret Key (separated by comma)";
         } else {
             apiKeyInput.disabled = false;
             apiKeyInput.placeholder = "Paste your API Key";
@@ -48,7 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const provider = FinancialProviders[providerKey];
             const url = provider.buildUrl(ticker, apiKey, startDate, endDate);
             
-            const response = await fetch(url);
+            const fetchOptions = {};
+            if (provider.buildHeaders) {
+                fetchOptions.headers = provider.buildHeaders(apiKey);
+            }
+            
+            const response = await fetch(url, fetchOptions);
             if (!response.ok) throw new Error(`Network alert: HTTP ${response.status}`);
             
             const rawJson = await response.json();
@@ -163,6 +171,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const closePrices = calculatedData.map(item => parseFloat(item["Market Close"]));
         const ggmValues = calculatedData.map(item => item["GGM Value"] === "N/A" ? null : parseFloat(item["GGM Value"]));
 
+        // 1. Calculate 3-Period Simple Moving Average (SMA) Overlay
+        const smaValues = closePrices.map((val, index, arr) => {
+            if (index < 2) return null;
+            return (arr[index] + arr[index-1] + arr[index-2]) / 3;
+        });
+
+        // 2. Calculate 14-Period Relative Strength Index (RSI) Oscillator
+        const rsiValues = new Array(closePrices.length).fill(null);
+        if (closePrices.length > 14) {
+            let gains = 0, losses = 0;
+            for (let i = 1; i <= 14; i++) {
+                const diff = closePrices[i] - closePrices[i-1];
+                if (diff >= 0) gains += diff; else losses -= diff;
+            }
+            let avgGain = gains / 14;
+            let avgLoss = losses / 14;
+            rsiValues[14] = 100 - (100 / (1 + (avgGain / avgLoss)));
+
+            for (let i = 15; i < closePrices.length; i++) {
+                const diff = closePrices[i] - closePrices[i-1];
+                const gain = diff >= 0 ? diff : 0;
+                const loss = diff < 0 ? -diff : 0;
+                avgGain = ((avgGain * 13) + gain) / 14;
+                avgLoss = ((avgLoss * 13) + loss) / 14;
+                rsiValues[i] = avgLoss === 0 ? 100 : 100 - (100 / (1 + (avgGain / avgLoss)));
+            }
+        }
+
         convergenceChartInstance = new Chart(ctx, {
             type: 'line',
             data: {
@@ -172,65 +208,45 @@ document.addEventListener('DOMContentLoaded', () => {
                         label: 'Market Close ($)',
                         data: closePrices,
                         borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        pointRadius: 2,
-                        fill: true
+                        yAxisID: 'y', // Primary Axis
+                        tension: 0.3
                     },
                     {
-                        label: 'GGM Intrinsic Value ($)',
-                        data: ggmValues,
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        borderWidth: 2,
-                        borderDash: [5, 5],
-                        tension: 0.3,
-                        pointRadius: 2,
-                        fill: false
+                        label: '3-Period SMA',
+                        data: smaValues,
+                        borderColor: '#f59e0b',
+                        borderDash: [2, 2],
+                        yAxisID: 'y', // Primary Axis
+                        tension: 0.3
+                    },
+                    {
+                        label: '14-Period RSI',
+                        data: rsiValues,
+                        borderColor: '#ef4444',
+                        yAxisID: 'y1', // Secondary Axis
+                        tension: 0.3
                     }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: '#e5e7eb',
-                            font: {
-                                family: 'Plus Jakarta Sans',
-                                size: 12
-                            }
-                        }
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false
-                    }
-                },
                 scales: {
-                    x: {
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.05)'
-                        },
-                        ticks: {
-                            color: '#9ca3af',
-                            font: {
-                                family: 'Plus Jakarta Sans'
-                            }
-                        }
+                    x: { grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+                    y: { 
+                        type: 'linear', 
+                        display: true, 
+                        position: 'left',
+                        title: { display: true, text: 'Price ($)' }
                     },
-                    y: {
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.05)'
-                        },
-                        ticks: {
-                            color: '#9ca3af',
-                            font: {
-                                family: 'Plus Jakarta Sans'
-                            }
-                        }
+                    y1: { 
+                        type: 'linear', 
+                        display: true, 
+                        position: 'right',
+                        min: 0,
+                        max: 100, // Oscillators are bound 0-100
+                        title: { display: true, text: 'RSI Momentum' },
+                        grid: { drawOnChartArea: false } // Prevent gridline overlap
                     }
                 }
             }
