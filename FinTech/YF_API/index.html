@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Analyzer</title>
+    <meta name="description"
+        content="Real-time stock market chart analyzer with candlestick charts, volume analysis, and Yahoo Finance data.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- TradingView Lightweight Charts Standalone CDN -->
+    <script type="text/javascript"
+        src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <style>
+        /* Toast notification animation */
+        @keyframes toast-in {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes toast-out {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .toast-enter {
+            animation: toast-in 0.35s ease-out forwards;
+        }
+
+        .toast-exit {
+            animation: toast-out 0.3s ease-in forwards;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+    <!-- Navigation Bar -->
+    <nav class="bg-gray-800 p-4 shadow-md flex justify-between items-center z-10 relative">
+        <h1 class="text-xl font-bold tracking-wider">Market Analyzer</h1>
+        <button id="btn-update-key"
+            class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-sm font-semibold transition-colors">
+            Update API Key
+        </button>
+    </nav>
+
+    <!-- Control Bar -->
+    <div
+        class="bg-gray-800 border-t border-gray-700 p-4 flex flex-wrap gap-6 items-end justify-center shadow z-10 relative">
+
+        <!-- Ticker Input & Lookup -->
+        <div class="flex flex-col">
+            <div class="flex justify-between items-center mb-1">
+                <label for="input-ticker" class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Ticker
+                    Symbol</label>
+                <a href="https://finance.yahoo.com/lookup" target="_blank" rel="noopener noreferrer"
+                    class="text-xs text-blue-400 hover:text-blue-300 ml-2"
+                    title="Find Ticker Symbols on Yahoo Finance">Lookup?</a>
+            </div>
+            <input type="text" id="input-ticker" value="COALINDIA.NS"
+                class="bg-gray-700 text-white px-3 py-2 rounded border border-gray-600 focus:outline-none focus:border-blue-500 uppercase w-32"
+                placeholder="e.g. COALINDIA.NS">
+        </div>
+
+        <!-- Period Dropdown -->
+        <div class="flex flex-col">
+            <label for="select-period" class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1">Time
+                Period</label>
+            <select id="select-period"
+                class="bg-gray-700 text-white px-3 py-2 rounded border border-gray-600 focus:outline-none focus:border-blue-500">
+                <option value="1mo">1 Month</option>
+                <option value="6mo">6 Months</option>
+                <option value="1y" selected>1 Year</option>
+                <option value="5y">5 Years</option>
+            </select>
+        </div>
+
+        <!-- Interval Dropdown -->
+        <div class="flex flex-col">
+            <label for="select-interval"
+                class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1">Candle Interval</label>
+            <select id="select-interval"
+                class="bg-gray-700 text-white px-3 py-2 rounded border border-gray-600 focus:outline-none focus:border-blue-500">
+                <option value="1d" selected>1 Day</option>
+                <option value="1wk">1 Week</option>
+                <option value="1mo">1 Month</option>
+            </select>
+        </div>
+
+        <!-- Fetch Button -->
+        <button id="btn-fetch"
+            class="bg-green-600 hover:bg-green-500 px-6 py-2 rounded font-semibold transition-colors h-[42px]">
+            Load Chart
+        </button>
+
+        <!-- Chart Overlays Menu -->
+        <div class="relative flex flex-col group">
+            <button id="btn-overlays" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded border border-gray-600 font-semibold transition-colors h-[42px] flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                Overlays
+            </button>
+            
+            <div id="dropdown-overlays" class="hidden absolute top-full mt-2 right-0 bg-gray-800 border border-gray-600 rounded-lg shadow-xl p-4 w-48 z-50">
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Indicators</h3>
+                <div class="flex flex-col gap-3">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" id="toggle-vol" checked class="form-checkbox h-4 w-4 text-blue-500 rounded border-gray-500 bg-gray-700 focus:ring-0 focus:ring-offset-0">
+                        <span class="text-sm font-semibold text-gray-200">Volume</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" id="toggle-sma20" checked class="form-checkbox h-4 w-4 text-amber-500 rounded border-gray-500 bg-gray-700 focus:ring-0 focus:ring-offset-0">
+                        <span class="text-sm font-semibold text-gray-200">SMA 20</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" id="toggle-sma50" checked class="form-checkbox h-4 w-4 text-violet-500 rounded border-gray-500 bg-gray-700 focus:ring-0 focus:ring-offset-0">
+                        <span class="text-sm font-semibold text-gray-200">SMA 50</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer mt-1">
+                        <input type="checkbox" id="toggle-rsi" checked class="form-checkbox h-4 w-4 text-yellow-500 rounded border-gray-500 bg-gray-700 focus:ring-0 focus:ring-offset-0">
+                        <span class="text-sm font-semibold text-gray-200">RSI 14</span>
+                    </label>
+                </div>
+                <!-- Add this inside <div id="dropdown-overlays"> in index.html, right below the RSI checkbox -->
+                <div class="mt-4 border-t border-gray-600 pt-3">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Layout Engine</h3>
+                    <div class="flex flex-col gap-3">
+                        <!-- Main Chart Boundary -->
+                        <div>
+                            <label class="text-xs text-gray-300 flex justify-between mb-1">
+                                Main Chart Boundary <span id="val-main-height">60%</span>
+                            </label>
+                            <input type="range" id="slider-main-height" min="40" max="80" value="60" class="w-full accent-blue-500">
+                        </div>
+                        
+                        <!-- NEW: Volume Peak -->
+                        <div>
+                            <label class="text-xs text-gray-300 flex justify-between mb-1">
+                                Volume Peak <span id="val-vol-peak">65%</span>
+                            </label>
+                            <input type="range" id="slider-vol-peak" min="30" max="90" value="65" class="w-full accent-blue-500">
+                        </div>
+
+                        <!-- RSI Start Point -->
+                        <div>
+                            <label class="text-xs text-gray-300 flex justify-between mb-1">
+                                RSI Start Point <span id="val-rsi-start">85%</span>
+                            </label>
+                            <input type="range" id="slider-rsi-start" min="70" max="95" value="85" class="w-full accent-blue-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Container -->
+    <main class="flex-grow p-4 flex flex-col h-full">
+        <div class="bg-gray-800 rounded-lg shadow-lg flex-grow relative flex flex-col p-2">
+
+            <!-- Ticker Info Header -->
+            <div id="ticker-info" class="hidden flex items-center gap-4 px-3 py-2 mb-1">
+                <span id="info-symbol" class="text-lg font-bold text-white tracking-wide"></span>
+                <span id="info-price" class="text-lg font-semibold text-gray-200"></span>
+                <span id="info-change" class="text-sm font-semibold"></span>
+            </div>
+
+            <!-- Loading overlay -->
+            <div id="loader"
+                class="hidden absolute inset-0 bg-gray-900 bg-opacity-75 z-10 flex items-center justify-center rounded-lg">
+                <span class="text-blue-400 font-mono text-lg animate-pulse">Fetching Data...</span>
+            </div>
+            <!-- The actual canvas target -->
+            <div id="chart-container" class="w-full h-full min-h-[500px]"></div>
+        </div>
+    </main>
+
+    <!-- Add this between </main> and <footer> -->
+    <section id="fundamentals-section" class="hidden flex-grow p-4 flex flex-col h-full mt-2">
+        <div class="bg-gray-800 rounded-lg shadow-lg p-6 w-full">
+            <h2 class="text-xl font-bold mb-4 border-b border-gray-700 pb-2">Financial Fundamentals</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Overview Pane -->
+                <div class="bg-gray-700 p-4 rounded shadow-inner">
+                    <h3 class="font-semibold text-gray-300 mb-2 uppercase text-sm tracking-wider">Company Overview</h3>
+                    <ul id="fund-overview" class="text-sm space-y-3 mt-4"></ul>
+                </div>
+                
+                <!-- Income Statement Pane -->
+                <div class="bg-gray-700 p-4 rounded shadow-inner overflow-x-auto">
+                    <h3 class="font-semibold text-gray-300 mb-2 uppercase text-sm tracking-wider">Income Statement</h3>
+                    <table class="w-full text-left text-sm whitespace-nowrap mt-4">
+                        <tbody id="fund-income"></tbody>
+                    </table>
+                </div>
+                
+                <!-- Balance Sheet Pane -->
+                <div class="bg-gray-700 p-4 rounded shadow-inner overflow-x-auto">
+                    <h3 class="font-semibold text-gray-300 mb-2 uppercase text-sm tracking-wider">Balance Sheet</h3>
+                    <table class="w-full text-left text-sm whitespace-nowrap mt-4">
+                        <tbody id="fund-balance"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 py-3 text-center text-xs text-gray-500">
+        Market Analyzer &mdash; Powered by Yahoo Finance &amp; <a href="https://www.tradingview.com/lightweight-charts/"
+            target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300">TradingView Lightweight
+            Charts</a>
+    </footer>
+
+    <!-- Toast Container (fixed bottom-right corner) -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <script type="module" src="./js/app.js"></script>
+</body>
+
+</html>
