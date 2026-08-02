@@ -1,0 +1,78 @@
+/* styles.css - Premium UI with dark mode, glassmorphism, gradients, Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+:root {
+  --primary-h: 220;
+  --primary-s: 80%;
+  --primary-l: 60%;
+  --bg-h: 210;
+  --bg-s: 15%;
+  --bg-l: 10%;
+  --card-bg: rgba(255, 255, 255, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.12);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: hsl(var(--bg-h), var(--bg-s), var(--bg-l));
+  color: #e0e0e0;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: hsl(var(--primary-h), var(--primary-s), var(--primary-l));
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Glassmorphism card */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+/* Button styling */
+.btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  transition: transform 0.2s, background-color 0.2s;
+}
+.btn-primary {
+  background: hsl(var(--primary-h), var(--primary-s), var(--primary-l));
+  color: #fff;
+}
+.btn-primary:hover {
+  background: hsl(var(--primary-h), var(--primary-s), calc(var(--primary-l) - 5%));
+  transform: translateY(-2px);
+}
+
+/* Responsive layout */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Utility classes */
+.mt-2 { margin-top: 0.5rem; }
+.mt-4 { margin-top: 1rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.text-center { text-align: center; }
+
+/* Dark mode tweaks for charts */
+.chart-bg {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 1rem;
+}

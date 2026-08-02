@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Back‑Test Builder – Market Analyzer</title>
+    <meta name="description" content="Test historical market prediction theories using custom strategies and OHLCV data." />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.plot.ly/plotly-2.24.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+        }
+        .fancy-input:focus { outline: none; box-shadow: 0 0 0 2px #3b82f6; }
+        #strategy-code { font-family: 'Courier New', monospace; font-size: 0.8rem; resize: vertical; min-height: 160px; }
+        @keyframes progress-bar { 0%{width:10%} 50%{width:70%} 100%{width:95%} }
+        .progress-bar-animated { animation: progress-bar 8s ease-out forwards; }
+        @keyframes toast-in  { from{transform:translateX(120%);opacity:0} to{transform:translateX(0);opacity:1} }
+        @keyframes toast-out { from{transform:translateX(0);opacity:1} to{transform:translateX(120%);opacity:0} }
+        .toast-enter { animation: toast-in  0.35s ease-out forwards; }
+        .toast-exit  { animation: toast-out 0.3s ease-in  forwards; }
+        .metric-card { transition: transform 0.2s, box-shadow 0.2s; }
+        .metric-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+        #trade-table tbody tr:hover { background: rgba(255,255,255,0.06); }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+
+<!-- API Key Modal (always in DOM) -->
+<div id="api-key-modal"
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.65);
+            backdrop-filter:blur(4px); z-index:9999;
+            justify-content:center; align-items:center;">
+    <div style="background:#1f2937; border:1px solid #374151; border-radius:12px;
+                padding:2rem; width:min(420px,90vw); box-shadow:0 20px 60px rgba(0,0,0,.6);">
+        <h2 style="margin:0 0 .5rem; font-size:1.1rem; font-weight:700; color:#f3f4f6;">🔑 API Key</h2>
+        <p style="margin:0 0 1.25rem; font-size:.8rem; color:#9ca3af;">
+            Enter your backend API key. Stored in <code style="color:#60a5fa">localStorage</code>.
+        </p>
+        <input id="api-key-input" type="password"
+               placeholder="Paste your API key here…"
+               autocomplete="off"
+               style="width:100%;padding:.65rem .9rem;border-radius:8px;background:#111827;
+                      border:1px solid #4b5563;color:#f3f4f6;font-size:.9rem;margin-bottom:1rem;" />
+        <div style="display:flex;justify-content:flex-end;gap:.75rem;">
+            <button id="api-key-cancel"
+                style="padding:.55rem 1.1rem;border-radius:8px;border:1px solid #4b5563;
+                       background:transparent;color:#9ca3af;cursor:pointer;font-size:.85rem;">Cancel</button>
+            <button id="api-key-save"
+                style="padding:.55rem 1.4rem;border-radius:8px;border:none;
+                       background:#2563eb;color:#fff;font-weight:600;cursor:pointer;font-size:.85rem;">Save Key</button>
+        </div>
+    </div>
+</div>
+
+<!-- NAVIGATION -->
+<nav class="bg-gray-800/90 backdrop-blur border-b border-gray-700 px-6 py-3 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+        <span class="text-lg font-bold tracking-wide">Back‑Test Builder</span>
+    </div>
+    <div class="flex items-center gap-4">
+        <a href="index.html" class="text-sm text-gray-400 hover:text-blue-300 transition-colors">← Chart Viewer</a>
+        <button id="btn-update-key"
+            class="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded text-sm font-semibold transition-colors">
+            🔑 Update API Key
+        </button>
+    </div>
+</nav>
+
+<!-- MAIN -->
+<main class="flex-grow px-4 py-6 max-w-7xl mx-auto w-full space-y-6">
+
+    <!-- CONFIG PANEL -->
+    <section class="glass-card p-6">
+        <h2 class="text-xl font-bold mb-5 flex items-center gap-2">
+            <span class="text-blue-400">⚙️</span> Experiment Configuration
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider" for="ticker-input">
+                    Ticker Symbol
+                    <a href="https://finance.yahoo.com/lookup" target="_blank" rel="noopener"
+                       class="ml-2 text-blue-400 hover:text-blue-300 normal-case">Lookup?</a>
+                </label>
+                <input id="ticker-input" type="text"
+                    class="fancy-input bg-gray-700 border border-gray-600 text-white px-3 py-2 rounded-lg uppercase"
+                    placeholder="e.g. COALINDIA.NS" value="COALINDIA.NS" />
+            </div>
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider" for="period-select">Time Period</label>
+                <select id="period-select" class="fancy-input bg-gray-700 border border-gray-600 text-white px-3 py-2 rounded-lg">
+                    <option value="1mo">1 Month</option>
+                    <option value="3mo">3 Months</option>
+                    <option value="6mo">6 Months</option>
+                    <option value="1y" selected>1 Year</option>
+                    <option value="2y">2 Years</option>
+                    <option value="5y">5 Years</option>
+                </select>
+            </div>
+            <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider" for="interval-select">Candle Interval</label>
+                <select id="interval-select" class="fancy-input bg-gray-700 border border-gray-600 text-white px-3 py-2 rounded-lg">
+                    <option value="1d" selected>1 Day</option>
+                    <option value="1wk">1 Week</option>
+                    <option value="1mo">1 Month</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mt-5 flex flex-col gap-1.5">
+            <div class="flex justify-between items-center">
+                <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    Strategy Code <span class="text-gray-500 font-normal normal-case">(function <code class="text-blue-300">run(data, indicators)</code> → returns array of trades)</span>
+                </label>
+                <button id="btn-load-example" class="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                    Load SMA Crossover Example
+                </button>
+            </div>
+            <textarea id="strategy-code"
+                class="fancy-input w-full bg-gray-800 border border-gray-600 text-green-300 px-4 py-3 rounded-lg"
+                placeholder="// Write a function named run(data, indicators) and return an array of trade objects.
+// Each trade: { entryDate, exitDate, entryPrice, exitPrice, side, shares, pnl }
+// data[i] has: date, open, high, low, close, volume
+// indicators.sma(period), indicators.ema(period), indicators.rsi(period)
+function run(data, indicators) {
+    return [];
+}"></textarea>
+        </div>
+
+        <div class="mt-5 flex flex-wrap gap-3 items-center justify-between">
+            <p class="text-xs text-gray-500">Initial Capital: <strong class="text-white">$10,000</strong> &nbsp;|&nbsp; Up to 5 years of historical data</p>
+            <div class="flex gap-3">
+                <button id="btn-clear-cache"
+                    class="bg-gray-700 hover:bg-gray-600 border border-gray-600 text-sm px-4 py-2 rounded-lg transition-colors">
+                    🗑️ Clear Cache
+                </button>
+                <button id="btn-export"
+                    class="bg-gray-700 hover:bg-gray-600 border border-gray-600 text-sm px-4 py-2 rounded-lg transition-colors hidden">
+                    📥 Export JSON
+                </button>
+                <button id="btn-run"
+                    class="bg-blue-600 hover:bg-blue-500 font-bold px-6 py-2 rounded-lg transition-all flex items-center gap-2">
+                    ▶ Run Back‑Test
+                </button>
+            </div>
+        </div>
+
+        <div id="progress-container" class="mt-4 hidden">
+            <p id="progress-msg" class="text-xs text-blue-300 mb-1">Fetching data…</p>
+            <div class="w-full bg-gray-700 rounded-full h-1.5">
+                <div id="progress-bar" class="bg-blue-500 h-1.5 rounded-full"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="results-section" class="hidden space-y-6">
+        <div id="metrics-row" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3"></div>
+        <div class="glass-card p-4">
+            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Price Chart</h3>
+            <div id="price-chart" style="height:380px"></div>
+        </div>
+        <div class="glass-card p-4">
+            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Equity Curve</h3>
+            <div id="equity-chart" style="height:280px"></div>
+        </div>
+        <div class="glass-card p-4">
+            <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Trade Log</h3>
+            <div class="overflow-x-auto">
+                <table id="trade-table" class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-700 text-gray-400 text-xs uppercase">
+                            <th class="py-2 pr-4 text-left">#</th>
+                            <th class="py-2 pr-4 text-left">Side</th>
+                            <th class="py-2 pr-4 text-left">Entry Date</th>
+                            <th class="py-2 pr-4 text-left">Entry Price</th>
+                            <th class="py-2 pr-4 text-left">Exit Date</th>
+                            <th class="py-2 pr-4 text-left">Exit Price</th>
+                            <th class="py-2 pr-4 text-left">Shares</th>
+                            <th class="py-2 text-right">P&amp;L</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trade-tbody"></tbody>
+                </table>
+                <p id="no-trades-msg" class="text-gray-500 text-sm py-4 hidden">No trades generated. Adjust your strategy or use a longer time period.</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="bg-gray-800 border-t border-gray-700 py-3 text-center text-xs text-gray-500 mt-auto">
+    Market Analyzer — Back‑Test Builder &nbsp;|&nbsp; Powered by Yahoo Finance &amp; Plotly
+</footer>
+
+<div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+<!-- ALL LOGIC IN ONE PLAIN SCRIPT — NO ES MODULE IMPORTS -->
+<script>
+// ─── localStorage helpers ────────────────────────────────────────────────────
+const STORAGE_KEY = 'market_api_key';
+function getApiKey()    { return localStorage.getItem(STORAGE_KEY) || ''; }
+function setApiKey(key) { localStorage.setItem(STORAGE_KEY, key.trim()); }
+
+// ─── IndexedDB helpers ───────────────────────────────────────────────────────
+const DB_NAME = 'marketPredictionDB', DB_STORE = 'historicalData', DB_VER = 1;
+function openDB() {
+    return new Promise((res, rej) => {
+        const r = indexedDB.open(DB_NAME, DB_VER);
+        r.onupgradeneeded = () => { if (!r.result.objectStoreNames.contains(DB_STORE)) r.result.createObjectStore(DB_STORE); };
+        r.onsuccess = () => res(r.result);
+        r.onerror  = () => rej(r.error);
+    });
+}
+function dbGet(key) { return openDB().then(db => new Promise((res, rej) => { const r = db.transaction(DB_STORE,'readonly').objectStore(DB_STORE).get(key); r.onsuccess=()=>res(r.result??null); r.onerror=()=>rej(r.error); })); }
+function dbPut(key,val){ return openDB().then(db => new Promise((res,rej)=>{ const tx=db.transaction(DB_STORE,'readwrite'); tx.objectStore(DB_STORE).put(val,key); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); })); }
+function clearCache() { return openDB().then(db => new Promise((res,rej)=>{ const tx=db.transaction(DB_STORE,'readwrite'); tx.objectStore(DB_STORE).clear(); tx.oncomplete=res; tx.onerror=()=>rej(tx.error); })); }
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+function showToast(msg, type='info', dur=5000) {
+    const c=document.getElementById('toast-container');
+    const t=document.createElement('div');
+    const colors={error:'bg-red-600/90 border-red-400',success:'bg-green-600/90 border-green-400',info:'bg-blue-600/90 border-blue-400'};
+    t.className=`pointer-events-auto px-4 py-2.5 rounded-lg border text-sm font-semibold text-white shadow-xl backdrop-blur-sm toast-enter ${colors[type]||colors.info}`;
+    t.textContent=msg; c.appendChild(t);
+    setTimeout(()=>{ t.classList.replace('toast-enter','toast-exit'); t.addEventListener('animationend',()=>t.remove()); setTimeout(()=>t.remove(),500); }, dur);
+}
+
+// ─── API Key Modal ────────────────────────────────────────────────────────────
+function openKeyModal() {
+    const modal=document.getElementById('api-key-modal');
+    const input=document.getElementById('api-key-input');
+    input.value=getApiKey();
+    input.style.borderColor='#4b5563';
+    modal.style.display='flex';
+    setTimeout(()=>input.focus(),80);
+}
+document.getElementById('api-key-save').addEventListener('click',()=>{
+    const val=document.getElementById('api-key-input').value.trim();
+    if(!val){ document.getElementById('api-key-input').style.borderColor='#ef4444'; return; }
+    setApiKey(val);
+    document.getElementById('api-key-modal').style.display='none';
+    showToast('API key saved','success',3000);
+});
+document.getElementById('api-key-cancel').addEventListener('click',()=>{ document.getElementById('api-key-modal').style.display='none'; });
+document.getElementById('api-key-modal').addEventListener('click',(e)=>{ if(e.target===document.getElementById('api-key-modal')) document.getElementById('api-key-modal').style.display='none'; });
+document.getElementById('api-key-input').addEventListener('keydown',(e)=>{ if(e.key==='Enter') document.getElementById('api-key-save').click(); });
+document.getElementById('btn-update-key').addEventListener('click', openKeyModal);
+
+// Auto-show if no key on load
+if(!getApiKey()) openKeyModal();
+
+// ─── Clear Cache ──────────────────────────────────────────────────────────────
+document.getElementById('btn-clear-cache').addEventListener('click', async ()=>{
+    await clearCache();
+    showToast('Cache cleared','success',3000);
+});
+
+// ─── Load Example Strategy ───────────────────────────────────────────────────
+document.getElementById('btn-load-example').addEventListener('click',()=>{
+    document.getElementById('strategy-code').value = `// SMA 20/50 Golden Cross Strategy
+// Buy when SMA20 crosses above SMA50 (golden cross), sell on death cross.
+function run(data, indicators) {
+    const sma20 = indicators.sma(20);
+    const sma50 = indicators.sma(50);
+    const trades = [];
+    let inTrade = false, entry = null;
+    const shares = 10;
+
+    for (let i = 51; i < data.length; i++) {
+        if (sma20[i-1] === null || sma50[i-1] === null) continue;
+        const wasBelowOrEqual = sma20[i-1] <= sma50[i-1];
+        const isAbove         = sma20[i]   >  sma50[i];
+        const wasAbove        = sma20[i-1] >  sma50[i-1];
+        const isBelow         = sma20[i]   <= sma50[i];
+
+        if (!inTrade && wasBelowOrEqual && isAbove) {
+            // Golden cross — BUY
+            entry = { date: data[i].date, price: data[i].close };
+            inTrade = true;
+        } else if (inTrade && wasAbove && isBelow) {
+            // Death cross — SELL
+            const pnl = (data[i].close - entry.price) * shares;
+            trades.push({ side: 'long', entryDate: entry.date, entryPrice: entry.price,
+                          exitDate: data[i].date, exitPrice: data[i].close, shares, pnl });
+            inTrade = false;
+        }
+    }
+    return trades;
+}`;
+    showToast('SMA Crossover example loaded','info',2000);
+});
+
+// ─── Inline SMA helper for chart rendering ─────────────────────────────────
+function calcSMAArr(arr, period) {
+    const out=new Array(arr.length).fill(null);
+    let sum=0;
+    for(let i=0;i<arr.length;i++){
+        sum+=arr[i];
+        if(i>=period) sum-=arr[i-period];
+        if(i>=period-1) out[i]=sum/period;
+    }
+    return out;
+}
+
+// ─── Plotly base layout ───────────────────────────────────────────────────────
+const DL = {
+    paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)',
+    font:{color:'#d1d5db',family:'Inter, sans-serif',size:11},
+    xaxis:{gridcolor:'#374151',linecolor:'#374151'},
+    yaxis:{gridcolor:'#374151',linecolor:'#374151'},
+    margin:{t:30,r:10,b:50,l:60},
+};
+const PC = {responsive:true,displayModeBar:false};
+
+// ─── Render helpers ───────────────────────────────────────────────────────────
+function renderMetrics(m) {
+    const row=document.getElementById('metrics-row'); row.innerHTML='';
+    [{label:'Total Return',value:m.totalReturn,c:m.totalReturn.startsWith('-')?'text-red-400':'text-green-400'},
+     {label:'Final Equity',value:'$'+m.finalEquity,c:'text-blue-300'},
+     {label:'Total Trades',value:m.totalTrades,c:'text-white'},
+     {label:'Win Rate',value:m.winRate,c:'text-yellow-300'},
+     {label:'Wins',value:m.wins,c:'text-green-400'},
+     {label:'Max Drawdown',value:m.maxDrawdown,c:'text-red-400'},
+    ].forEach(({label,value,c})=>{
+        row.insertAdjacentHTML('beforeend',`<div class="glass-card metric-card p-4 text-center"><p class="text-xs text-gray-400 uppercase tracking-wider mb-1">${label}</p><p class="text-lg font-bold ${c}">${value}</p></div>`);
+    });
+}
+
+function renderPriceChart(marketData,trades,ticker){
+    const dates=marketData.map(d=>d.date);
+    const closes=marketData.map(d=>d.close);
+    const sma20=calcSMAArr(closes,20), sma50=calcSMAArr(closes,50);
+    const traces=[
+        {type:'candlestick',x:dates,open:marketData.map(d=>d.open),high:marketData.map(d=>d.high),low:marketData.map(d=>d.low),close:closes,name:ticker,increasing:{line:{color:'#22c55e'}},decreasing:{line:{color:'#ef4444'}}},
+        {type:'scatter',mode:'lines',x:dates.slice(19),y:sma20.slice(19),name:'SMA 20',line:{color:'#f59e0b',width:1.5}},
+        {type:'scatter',mode:'lines',x:dates.slice(49),y:sma50.slice(49),name:'SMA 50',line:{color:'#a78bfa',width:1.5}},
+    ];
+    const buyT=trades.filter(t=>t.side==='long');
+    const sellT=trades.filter(t=>t.side==='long');
+    if(buyT.length) traces.push({type:'scatter',mode:'markers',x:buyT.map(t=>t.entryDate),y:buyT.map(t=>t.entryPrice),name:'Buy',marker:{symbol:'triangle-up',size:10,color:'#22c55e'}});
+    if(sellT.length) traces.push({type:'scatter',mode:'markers',x:sellT.map(t=>t.exitDate),y:sellT.map(t=>t.exitPrice),name:'Sell',marker:{symbol:'triangle-down',size:10,color:'#ef4444'}});
+    Plotly.newPlot('price-chart',traces,{...DL,title:{text:`${ticker} Price History`,font:{color:'#9ca3af',size:13}},xaxis:{...DL.xaxis,rangeslider:{visible:false}},legend:{bgcolor:'rgba(0,0,0,0)',font:{color:'#d1d5db'}}},PC);
+}
+
+function renderEquityChart(equityCurve){
+    Plotly.newPlot('equity-chart',[{type:'scatter',mode:'lines',fill:'tozeroy',x:equityCurve.map(p=>p.date),y:equityCurve.map(p=>p.equity),name:'Equity',line:{color:'#3b82f6',width:2},fillcolor:'rgba(59,130,246,0.15)'}],{...DL,yaxis:{...DL.yaxis,title:'Portfolio Value ($)'}},PC);
+}
+
+function renderTradeLog(trades){
+    const tbody=document.getElementById('trade-tbody');
+    const noMsg=document.getElementById('no-trades-msg');
+    tbody.innerHTML='';
+    if(!trades||trades.length===0){ noMsg.classList.remove('hidden'); return; }
+    noMsg.classList.add('hidden');
+    trades.forEach((t,i)=>{
+        const pc=t.pnl>=0?'text-green-400':'text-red-400';
+        tbody.insertAdjacentHTML('beforeend',`<tr class="border-b border-gray-800">
+            <td class="py-2 pr-4 text-gray-400">${i+1}</td>
+            <td class="py-2 pr-4 font-semibold ${t.side==='long'?'text-blue-300':'text-orange-300'}">${(t.side??'long').toUpperCase()}</td>
+            <td class="py-2 pr-4">${t.entryDate??'–'}</td>
+            <td class="py-2 pr-4">${t.entryPrice!=null?t.entryPrice.toFixed(2):'–'}</td>
+            <td class="py-2 pr-4">${t.exitDate??'–'}</td>
+            <td class="py-2 pr-4">${t.exitPrice!=null?t.exitPrice.toFixed(2):'–'}</td>
+            <td class="py-2 pr-4">${t.shares??'–'}</td>
+            <td class="py-2 text-right font-bold ${pc}">${t.pnl!=null?(t.pnl>=0?'+':'')+t.pnl.toFixed(2):'–'}</td>
+        </tr>`);
+    });
+}
+
+// ─── Export ───────────────────────────────────────────────────────────────────
+let lastResults=null;
+document.getElementById('btn-export').addEventListener('click',()=>{
+    if(!lastResults) return;
+    const blob=new Blob([JSON.stringify(lastResults,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=`backtest_${lastResults.ticker}_${Date.now()}.json`; a.click();
+    URL.revokeObjectURL(url);
+});
+
+// ─── RUN BACK‑TEST ────────────────────────────────────────────────────────────
+document.getElementById('btn-run').addEventListener('click',()=>{
+    const apiKey=getApiKey();
+    if(!apiKey){ showToast('Please set your API key first','error'); openKeyModal(); return; }
+
+    const ticker   = document.getElementById('ticker-input').value.trim().toUpperCase();
+    const period   = document.getElementById('period-select').value;
+    const interval = document.getElementById('interval-select').value;
+    const strategy = document.getElementById('strategy-code').value;
+    if(!ticker){ showToast('Please enter a ticker symbol','error'); return; }
+
+    const progressContainer=document.getElementById('progress-container');
+    const progressMsg=document.getElementById('progress-msg');
+    const progressBar=document.getElementById('progress-bar');
+    const runBtn=document.getElementById('btn-run');
+
+    progressContainer.classList.remove('hidden');
+    progressBar.className='bg-blue-500 h-1.5 rounded-full progress-bar-animated';
+    runBtn.disabled=true; runBtn.classList.add('opacity-60','cursor-not-allowed');
+    document.getElementById('results-section').classList.add('hidden');
+    document.getElementById('btn-export').classList.add('hidden');
+
+    const worker=new Worker('./js/backtest_worker.js');
+    worker.postMessage({ticker,period,interval,apiKey,strategyCode:strategy});
+
+    worker.onmessage=(e)=>{
+        const {status,message}=e.data;
+        if(status==='progress'){ progressMsg.textContent=message; return; }
+        progressContainer.classList.add('hidden');
+        runBtn.disabled=false; runBtn.classList.remove('opacity-60','cursor-not-allowed');
+        worker.terminate();
+        if(status==='error'){ showToast('Error: '+message,'error',8000); return; }
+        const {marketData,equityCurve,metrics,trades}=e.data;
+        lastResults={ticker,period,interval,marketData,equityCurve,metrics,trades};
+        renderMetrics(metrics);
+        renderPriceChart(marketData,trades,ticker);
+        renderEquityChart(equityCurve);
+        renderTradeLog(trades);
+        document.getElementById('results-section').classList.remove('hidden');
+        document.getElementById('btn-export').classList.remove('hidden');
+        showToast('Back‑test complete: '+ticker,'success',4000);
+        document.getElementById('results-section').scrollIntoView({behavior:'smooth'});
+    };
+
+    worker.onerror=(e)=>{
+        progressContainer.classList.add('hidden');
+        runBtn.disabled=false; runBtn.classList.remove('opacity-60','cursor-not-allowed');
+        showToast('Worker error: '+e.message,'error',8000);
+        worker.terminate();
+    };
+});
+</script>
+</body>
+</html>
